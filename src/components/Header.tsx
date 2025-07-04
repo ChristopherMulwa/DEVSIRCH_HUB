@@ -37,7 +37,7 @@ const Header = () => {
   `;
 
   const textColor = isScrolled ? 'text-gray-800' : 'text-white';
-  const linkColor = isScrolled ? 'text-gray-600 hover:text-blue-600' : 'text-white hover:text-gray-200';
+  const linkColor = isScrolled ? 'text-gray-800 hover:text-blue-600' : 'text-white hover:text-gray-200';
 
 
   return (
