@@ -52,7 +52,7 @@ const ContactPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           <div>
             <h2 className="text-3xl font-bold text-gray-800 mb-4">Get in Touch</h2>
-            <p className="text-gray-600 mb-8">We'd love to hear from you. Please fill out the form below and we'll get back to you as soon as possible.</p>
+            <p className="text-gray-600 mb-8">We&apos;d love to hear from you. Please fill out the form below and we&apos;ll get back to you as soon as possible.</p>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
                 <label htmlFor="name" className="block text-gray-700 font-bold mb-2">Name</label>

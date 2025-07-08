@@ -1,5 +1,6 @@
 
 import type { Metadata } from 'next';
+import Image from 'next/image';
 
 export const metadata: Metadata = {
   title: 'Future Initiatives | SIRCH SOLUTIONS KE',
@@ -17,12 +18,12 @@ const FuturePage = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div>
-            <img src="https://placehold.co/600x400/000/FFF?text=Tech+Training" alt="Tech Training" className="rounded-lg shadow-md" />
+            <Image src="https://placehold.co/600x400/000/FFF?text=Tech+Training" alt="Tech Training" width={600} height={400} className="rounded-lg shadow-md" />
           </div>
           <div>
             <h2 className="text-3xl font-bold text-gray-800 mb-4">Professional Tech Training & Online Courses</h2>
             <p className="text-gray-600 mb-4">
-              We believe in the power of education to transform lives and empower individuals with the skills they need to succeed in the tech industry. That's why we are developing a comprehensive range of professional tech training programs and online courses.
+              We believe in the power of education to transform lives and empower individuals with the skills they need to succeed in the tech industry. That&apos;s why we are developing a comprehensive range of professional tech training programs and online courses.
             </p>
             <p className="text-gray-600">
               Our courses will cover a wide range of topics, from cybersecurity and software development to cloud computing and data science. We will offer both in-person and online learning options to make our programs accessible to everyone.
@@ -32,7 +33,7 @@ const FuturePage = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mt-16">
           <div className="md:order-2">
-            <img src="https://placehold.co/600x400/000/FFF?text=Tendering" alt="Tendering" className="rounded-lg shadow-md" />
+            <Image src="https://placehold.co/600x400/000/FFF?text=Tendering" alt="Tendering" width={600} height={400} className="rounded-lg shadow-md" />
           </div>
           <div className="md:order-1">
             <h2 className="text-3xl font-bold text-gray-800 mb-4">Tendering & Supply Partnerships</h2>

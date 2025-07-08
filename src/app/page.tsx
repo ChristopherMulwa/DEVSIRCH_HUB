@@ -136,7 +136,7 @@ export default function Home() {
       <section className="relative bg-gradient-to-r from-blue-700 to-blue-900 text-white py-20">
         <div className="absolute inset-0 bg-black opacity-40 z-10"></div>
         <div className="relative z-20 container mx-auto px-4 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">Let's Build Your Digital Future, Together</h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">Let&apos;s Build Your Digital Future, Together</h2>
           <p className="text-lg md:text-xl text-gray-200 mb-10 max-w-3xl mx-auto">Ready to secure and scale your business? We provide the expertise and solutions to help you achieve your goals.</p>
           <Link href="/contact" className="bg-white text-blue-600 font-bold py-4 px-10 rounded-full hover:bg-gray-200 transition-transform transform hover:scale-105 duration-300 text-lg inline-flex items-center shadow-lg">
             Get a Free Consultation <ArrowRight className="ml-3" />
