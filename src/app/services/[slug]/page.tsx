@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
+import Image from 'next/image';
 
 const serviceData = {
   'cybersecurity-awareness': {
@@ -84,11 +85,12 @@ const serviceData = {
   },
 };
 
-type Props = {
+interface ServicePageProps {
   params: { slug: string };
-};
+}
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+
+export async function generateMetadata({ params }: ServicePageProps): Promise<Metadata> {
   const service = serviceData[params.slug as keyof typeof serviceData];
   if (!service) {
     return notFound();
@@ -96,7 +98,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: `${service.title} | SIRCH SOLUTIONS KE` };
 }
 
-const ServiceDetailPage = ({ params }: Props) => {
+const ServiceDetailPage = ({ params }: ServicePageProps) => {
   const service = serviceData[params.slug as keyof typeof serviceData];
 
   if (!service) {
@@ -109,7 +111,7 @@ const ServiceDetailPage = ({ params }: Props) => {
         <h1 className="text-4xl font-bold text-center text-gray-800 mb-12">{service.title}</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div>
-            <img src={`https://placehold.co/600x400/000/FFF?text=${service.title.replace(/\s/g, '+')}`} alt={service.title} className="rounded-lg shadow-md" />
+            <Image src={`https://placehold.co/600x400/000/FFF?text=${service.title.replace(/\s/g, '+')}`} alt={service.title} width={600} height={400} className="rounded-lg shadow-md" />
           </div>
           <div>
             <h2 className="text-3xl font-bold text-gray-800 mb-4">Service Overview</h2>
