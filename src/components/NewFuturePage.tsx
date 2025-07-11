@@ -17,10 +17,14 @@ const EarlyAccessForm = () => {
     setStatus('Submitting...');
 
     try {
-      const response = await fetch('/api/early-access', {
+      const response = await fetch('/api/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ 
+          email,
+          subject: 'New Early Access Signup',
+          message: `${email} has signed up for early access.`
+        }),
       });
       if (response.ok) {
         setStatus('Success! You\'re on the list.');
@@ -70,14 +74,12 @@ const NewFuturePage = () => {
   return (
     <div className="bg-white text-gray-800">
       {/* 1. Hero Section */}
-      <section className="relative bg-gray-900 text-white text-center py-20 md:py-32 overflow-hidden">
-        <div className="absolute inset-0">
-            <Image src="/homepagehero.png" alt="Abstract background" layout="fill" objectFit="cover" className="opacity-20" />
-            <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/80 to-transparent"></div>
-        </div>
-        <div className="relative container mx-auto px-4">
+      <section className="relative h-screen flex items-center justify-center text-center text-white">
+        <Image src="/FutureInitiativesHeroImage.png" alt="Abstract background" layout="fill" objectFit="cover" className="z-0" />
+        <div className="absolute inset-0 bg-black opacity-50 z-10"></div>
+        <div className="relative z-20 container mx-auto px-4">
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight">The Future of Your Business Starts Here.</h1>
-          <p className="mt-6 max-w-3xl mx-auto text-lg md:text-xl text-gray-300">
+          <p className="mt-6 max-w-3xl mx-auto text-lg md:text-xl text-gray-200">
             Discover the upcoming services designed to give you an unfair advantage in security, efficiency, and growth. Be the first to benefit.
           </p>
         </div>
@@ -89,14 +91,14 @@ const NewFuturePage = () => {
           <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
             <div className="order-2 md:order-1">
               <h2 className="text-3xl md:text-4xl font-bold text-blue-600 mb-4">The SIRCH Academy</h2>
-              <h3 className="text-2xl md:text-3xl font-bold mb-6">Unlock Your Team's Potential.</h3>
+              <h3 className="text-2xl md:text-3xl font-bold mb-6">Future-Proofing Your Workforce.</h3>
               <p className="text-lg text-gray-600 mb-6">
-                We're building a premier learning destination to transform your employees from a potential risk into your strongest security asset. Move beyond simple compliance and foster a true culture of security.
+                In a rapidly evolving digital landscape, the greatest investment is in your people. The SIRCH Academy is a premier training ground designed to equip your teams with the critical skills needed to navigate modern challenges in security, data, and cloud technologies.
               </p>
               <ul className="space-y-4">
-                <li className="flex items-start"><Check className="h-6 w-6 text-green-500 mr-3 flex-shrink-0 mt-1" /><span><span className="font-semibold">Expert-Led Courses:</span> Master cybersecurity, development, and cloud concepts.</span></li>
-                <li className="flex items-start"><Check className="h-6 w-6 text-green-500 mr-3 flex-shrink-0 mt-1" /><span><span className="font-semibold">Actionable Training:</span> Go from theory to practice with hands-on labs and real-world scenarios.</span></li>
-                <li className="flex items-start"><Check className="h-6 w-6 text-green-500 mr-3 flex-shrink-0 mt-1" /><span><span className="font-semibold">Flexible Learning:</span> On-demand modules designed to fit the schedules of busy professionals.</span></li>
+                <li className="flex items-start"><Check className="h-6 w-6 text-green-500 mr-3 flex-shrink-0 mt-1" /><span><span className="font-semibold">Advanced Cybersecurity Drills:</span> Move beyond theory with phishing simulations, incident response workshops, and secure coding practices.</span></li>
+                <li className="flex items-start"><Check className="h-6 w-6 text-green-500 mr-3 flex-shrink-0 mt-1" /><span><span className="font-semibold">AI & Data Literacy:</span> Empower your team to leverage AI tools responsibly and make data-driven decisions with our courses on data analytics and business intelligence.</span></li>
+                <li className="flex items-start"><Check className="h-6 w-6 text-green-500 mr-3 flex-shrink-0 mt-1" /><span><span className="font-semibold">Cloud & DevOps Mastery:</span> Unlock efficiency with hands-on training for AWS, Azure, and Google Cloud, coupled with modern DevOps methodologies.</span></li>
               </ul>
               <EarlyAccessForm />
             </div>

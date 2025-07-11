@@ -18,7 +18,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div>
-            <h3 className="text-2xl font-bold mb-4">SIRCH SOLUTIONS KE</h3>
+            <h3 className="text-2xl font-bold mb-4">DEVSIRCH HUB</h3>
             <p className="text-gray-400 mb-4">
               Empowering your digital future with secure and innovative IT solutions.
             </p>
@@ -67,14 +67,14 @@ const Footer = () => {
               </li>
               <li className="flex items-center">
                 <Mail size={20} className="mr-3 flex-shrink-0" />
-                <a href="mailto:info@sirchsolutions.co.ke" className="hover:text-white transition-colors">info@sirchsolutions.co.ke</a>
+                <a href="mailto:info@devsirchhub.co.ke" className="hover:text-white transition-colors">info@devsirchhub.co.ke</a>
               </li>
             </ul>
           </div>
         </div>
 
         <div className="mt-10 border-t border-gray-800 pt-6 text-center text-gray-500">
-          <p>&copy; {year} SIRCH SOLUTIONS KE. All Rights Reserved. | 
+          <p>&copy; {year} DEVSIRCH HUB. All Rights Reserved. | 
             <Link href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link> | 
             <Link href="/terms-of-service" className="hover:text-white transition-colors">Terms of Service</Link>
           </p>

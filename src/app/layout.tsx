@@ -8,7 +8,7 @@ import ContactModal from "@/components/ContactModal";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "SIRCH SOLUTIONS KE - Empowering Your Digital Future",
+  title: "DEVSIRCH HUB - Empowering Your Digital Future",
   description: "Comprehensive IT solutions including cybersecurity, web development, and ICT infrastructure.",
 };
 

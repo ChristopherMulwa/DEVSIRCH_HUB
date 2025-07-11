@@ -7,8 +7,8 @@ import InteractiveTimeline from '@/components/InteractiveTimeline';
 import ValueCard from '@/components/ValueCard';
 
 export const metadata: Metadata = {
-  title: 'About Us | SIRCH SOLUTIONS KE',
-  description: 'Learn about the mission, vision, and the founder of SIRCH SOLUTIONS KE, your trusted partner in innovative IT solutions.',
+  title: 'About Us | DEVSIRCH HUB',
+  description: 'Learn about the mission, vision, and the founder of DEVSIRCH HUB, your trusted partner in innovative IT solutions.',
 };
 
 const timelineEvents = [
@@ -19,7 +19,7 @@ const timelineEvents = [
   },
   {
     year: 'March 2025',
-    title: 'SIRCH SOLUTIONS KE is Founded',
+    title: 'DEVSIRCH HUB is Founded',
     description: 'We officially registered as a company, laying the groundwork for our future operations with a clear vision and mission.',
   },
   {
@@ -76,15 +76,17 @@ const AboutPage = () => {
   return (
     <div className="bg-gray-50">
       {/* Hero Section */}
-      <section className="relative h-96 flex items-center justify-center text-white">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url('/AboutUsHero.png')" }}
-        >
-          <div className="absolute inset-0 bg-black opacity-50"></div>
-        </div>
+      <section className="relative h-screen flex items-center justify-center text-white">
+        <Image
+          src="/AboutUsHero.png"
+          alt="About Us Hero Image"
+          layout="fill"
+          objectFit="cover"
+          className="absolute inset-0"
+        />
+        <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="relative z-10 text-center">
-          <h1 className="text-5xl font-extrabold">We are SIRCH SOLUTIONS KE</h1>
+          <h1 className="text-5xl font-extrabold">We are DEVSIRCH HUB</h1>
           <p className="mt-4 text-xl">Your Trusted Partner in Innovative IT Solutions</p>
         </div>
       </section>
@@ -110,7 +112,7 @@ const AboutPage = () => {
               <h3 className="text-3xl font-bold text-gray-900">Christopher Mulwa</h3>
               <p className="text-blue-600 font-semibold mt-1">Founder & Principal IT Consultant</p>
               <p className="mt-6 text-gray-700 leading-relaxed">
-                "I started SIRCH SOLUTIONS KE with a single mission: to provide businesses in Kenya with the robust, secure, and innovative IT solutions they need to thrive in a digital-first world. Technology should be an asset, not a vulnerability, and I'm passionate about building that reality for our clients."
+                "I started DEVSIRCH HUB with a single mission: to provide businesses in Kenya with the robust, secure, and innovative IT solutions they need to thrive in a digital-first world. Technology should be an asset, not a vulnerability, and I'm passionate about building that reality for our clients."
               </p>
               <p className="mt-4 text-gray-700 leading-relaxed">
                 With a deep-rooted expertise in cybersecurity and software development, I am personally invested in the success of every project. When you partner with us, you get a dedicated expert committed to understanding your challenges and delivering solutions that are not just effective, but transformative.

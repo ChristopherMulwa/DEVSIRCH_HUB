@@ -13,7 +13,7 @@ const faqData = [
         a: 'We partner with a diverse range of clients, from ambitious startups to established enterprises, across various industries. Our solutions are always tailored to meet the unique operational and strategic needs of each business.',
       },
       {
-        q: 'What makes SIRCH SOLUTIONS KE different from other IT providers?',
+        q: 'What makes DEVSIRCH HUB different from other IT providers?',
         a: 'Our core difference lies in our partnership approach. We don\'t just provide services; we integrate with your team to understand your long-term goals. We combine deep expertise in cybersecurity with proactive IT strategy to drive growth and mitigate risk.',
       },
     ],

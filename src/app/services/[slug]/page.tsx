@@ -95,7 +95,7 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
   if (!service) {
     return notFound();
   }
-  return { title: `${service.title} | SIRCH SOLUTIONS KE` };
+  return { title: `${service.title} | DEVSIRCH HUB` };
 }
 
 const ServiceDetailPage = ({ params }: ServicePageProps) => {

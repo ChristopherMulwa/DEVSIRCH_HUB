@@ -1,60 +1,53 @@
 import { NextRequest, NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
+import * as z from 'zod';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+// Zod schema for validating the request body
+const contactSchema = z.object({
+  name: z.string().min(2),
+  email: z.string().email(),
+  phone: z.string().optional(),
+  message: z.string().min(10),
+});
 
 export async function POST(req: NextRequest) {
   try {
-    const { name, email, message } = await req.json();
+    const body = await req.json();
 
-    // Basic validation
-    if (!name || !email || !message) {
-      return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
+    // Validate the request body against the schema
+    const parsed = contactSchema.safeParse(body);
+
+    if (!parsed.success) {
+      return NextResponse.json(parsed.error.format(), { status: 400 });
     }
 
-    // More robust email validation
-    const emailRegex = /^[^
-@]+@[^
-@]+\.[^
-@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json({ message: 'Invalid email address' }, { status: 400 });
-    }
+    const { name, email, phone, message } = parsed.data;
 
-    const transporter = nodemailer.createTransport({
-      service: 'gmail', // Using Gmail as an example
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
+    const { data, error } = await resend.emails.send({
+      from: 'onboarding@resend.dev', // This must be a verified domain on Resend
+      to: 'your-email@example.com', // Change this to your actual email address
+      subject: `New Contact Form Submission from ${name}`,
+      reply_to: email,
+      html: `
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        ${phone ? `<p><strong>Phone:</strong> ${phone}</p>` : ''}
+        <p><strong>Message:</strong></p>
+        <p>${message}</p>
+      `,
     });
 
-    const mailOptions = {
-      from: `"${name}" <${process.env.EMAIL_USER}>`, // Send from your email address
-      replyTo: email, // Set the user's email as the reply-to
-      to: process.env.EMAIL_RECIPIENT, // Your actual receiving email address
-      subject: `New Inquiry from ${name} via Website`,
-      html: `
-        <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-          <h2 style="color: #333;">New Website Inquiry</h2>
-          <p>You have received a new message from your website's contact form.</p>
-          <hr>
-          <p><strong>Name:</strong> ${name}</p>
-          <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
-          <p><strong>Message:</strong></p>
-          <blockquote style="border-left: 4px solid #ccc; padding-left: 16px; margin: 0;">
-            ${message.replace(/\n/g, '<br>')}
-          </blockquote>
-          <hr>
-          <p style="font-size: 0.8em; color: #888;">This email was sent from the SIRCH SOLUTIONS KE website.</p>
-        </div>
-      `,
-    };
+    if (error) {
+      console.error('Resend API error:', error);
+      return NextResponse.json({ message: 'Error sending email', error }, { status: 500 });
+    }
 
-    await transporter.sendMail(mailOptions);
+    return NextResponse.json({ message: 'Email sent successfully', data }, { status: 200 });
 
-    return NextResponse.json({ message: 'Form submitted successfully!' }, { status: 200 });
   } catch (error) {
-    console.error('API Error:', error);
-    // In production, you might want to log this error to a service
-    return NextResponse.json({ message: 'Server error. Please try again later.' }, { status: 500 });
+    console.error('Server error:', error);
+    return NextResponse.json({ message: 'An unexpected error occurred' }, { status: 500 });
   }
 }

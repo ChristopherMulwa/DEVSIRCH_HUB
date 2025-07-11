@@ -1,12 +1,12 @@
-# SIRCH SOLUTIONS KE
+# DEVSIRCH HUB
 
-![GitHub last commit](https://img.shields.io/github/last-commit/ChristopherMulwa/SirchSolutions-ke)
-![GitHub repo size](https://img.shields.io/github/repo-size/ChristopherMulwa/SirchSolutions-ke)
-![GitHub language count](https://img.shields.io/github/languages/count/ChristopherMulwa/SirchSolutions-ke)
+![GitHub last commit](https://img.shields.io/github/last-commit/ChristopherMulwa/DevSirch-Hub)
+![GitHub repo size](https://img.shields.io/github/repo-size/ChristopherMulwa/DevSirch-Hub)
+![GitHub language count](https://img.shields.io/github/languages/count/ChristopherMulwa/DevSirch-Hub)
 
 > Empowering Your Digital Future with Secure IT Solutions.
 
-This is the official repository for the SIRCH SOLUTIONS KE website, a Next.js application showcasing our services and expertise in the IT industry.
+This is the official repository for the DEVSIRCH HUB website, a Next.js application showcasing our services and expertise in the IT industry.
 
 ## ✨ Features
 
@@ -28,11 +28,11 @@ These instructions will get you a copy of the project up and running on your loc
 
 1.  Clone the repo:
     ```sh
-    git clone https://github.com/ChristopherMulwa/SirchSolutions-ke.git
+    git clone https://github.com/ChristopherMulwa/DevSirch-Hub.git
     ```
 2.  Navigate to the project directory:
     ```sh
-    cd SirchSolutions-ke
+    cd DevSirch-Hub
     ```
 3.  Install NPM packages:
     ```sh
@@ -55,7 +55,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## 🤝 Contributing
 
-Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/ChristopherMulwa/SirchSolutions-ke/issues).
+Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/ChristopherMulwa/DevSirch-Hub/issues).
 
 ## 📝 License
 
@@ -65,4 +65,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 Christopher Mulwa - [mulwachristopher7@gmail.com](mailto:mulwachristopher7@gmail.com)
 
-Project Link: [https://github.com/ChristopherMulwa/SirchSolutions-ke](https://github.com/ChristopherMulwa/SirchSolutions-ke)
+Project Link: [https://github.com/ChristopherMulwa/DevSirch-Hub](https://github.com/ChristopherMulwa/DevSirch-Hub)

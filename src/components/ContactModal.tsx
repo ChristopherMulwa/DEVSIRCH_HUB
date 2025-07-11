@@ -1,123 +1,179 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { useModal } from '@/context/ModalContext';
-import { X, LoaderCircle } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { X, Loader2, Send } from 'lucide-react';
+import { toast } from 'react-hot-toast';
+
+// Zod schema for form validation
+const modalContactSchema = z.object({
+  name: z.string().min(2, { message: "Name is required." }),
+  email: z.string().email({ message: "A valid email is required." }),
+  message: z.string().min(10, { message: "Message must be at least 10 characters." }),
+});
+
+type ModalFormInputs = z.infer<typeof modalContactSchema>;
 
 const ContactModal = () => {
   const { isModalOpen, closeModal, serviceTitle } = useModal();
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-  const [status, setStatus] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+    setValue,
+  } = useForm<ModalFormInputs>({
+    resolver: zodResolver(modalContactSchema),
+  });
 
   useEffect(() => {
-    // Pre-fill message when serviceTitle changes, but only if the form is not dirty
     if (serviceTitle) {
-      setFormData(prev => ({ ...prev, message: `I'd like to discuss ${serviceTitle}.` }));
+      setValue('message', `I'd like to inquire about your ${serviceTitle} service.`);
     } else {
-      // Reset message if modal is opened without a service title
-      setFormData(prev => ({ ...prev, message: '' }));
+      setValue('message', '');
     }
-  }, [serviceTitle]);
+  }, [serviceTitle, setValue]);
 
+  // Handle keyboard shortcuts and outside clicks
   useEffect(() => {
-    const handleEsc = (event: KeyboardEvent) => {
+    const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         closeModal();
       }
     };
-    if (isModalOpen) {
-      window.addEventListener('keydown', handleEsc);
-    }
-    return () => {
-      window.removeEventListener('keydown', handleEsc);
-    };
-  }, [isModalOpen, closeModal]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [closeModal]);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setStatus('Sending...');
-    
+  const onSubmit: SubmitHandler<ModalFormInputs> = async (data) => {
     try {
-        const response = await fetch('/api/contact', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData),
-        });
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
 
-        if (response.ok) {
-            setStatus('Message sent successfully!');
-            setFormData({ name: '', email: '', message: '' });
-            setTimeout(() => {
-                closeModal();
-            }, 2000);
-        } else {
-            const errorData = await response.json();
-            setStatus(errorData.message || 'Failed to send message. Please try again.');
-        }
+      if (!response.ok) {
+        throw new Error('Network response was not ok.');
+      }
+
+      toast.success('Message sent! We will be in touch soon.');
+      reset();
+      setTimeout(() => {
+        closeModal();
+      }, 1500);
+
     } catch (error) {
-        console.error('Submission error:', error);
-        setStatus('An error occurred. Please try again.');
-    } finally {
-        setIsLoading(false);
-        setTimeout(() => {
-            setStatus('');
-        }, 5000);
+      console.error('Submission error:', error);
+      toast.error('Failed to send message. Please try again later.');
     }
   };
-
-  if (!isModalOpen) return null;
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-70 z-50 flex justify-center items-center p-4 transition-opacity duration-300"
-      onClick={closeModal}
-    >
-      <div
-        className="bg-white rounded-lg shadow-2xl w-full max-w-lg p-8 relative animate-fade-in-up"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button
-          onClick={closeModal}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
-          aria-label="Close modal"
+    <AnimatePresence>
+      {isModalOpen && (
+        <motion.div
+          ref={modalRef}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm"
+          onMouseDown={() => closeModal()} // Use onMouseDown for outside click
         >
-          <X size={24} />
-        </button>
-        <div className="mb-6 text-center">
-            <h2 className="text-2xl font-bold text-gray-900">Get in Touch</h2>
-            <p className="text-gray-700 mt-1">We'll get back to you as soon as possible.</p>
-        </div>
-        <form onSubmit={handleSubmit}>
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-800 mb-1">Name</label>
-              <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} required className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-gray-900" />
+          <motion.div
+            initial={{ y: 50, opacity: 0, scale: 0.95 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: 50, opacity: 0, scale: 0.95 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            className="relative bg-white dark:bg-gray-900 rounded-2xl shadow-xl w-full max-w-md m-4"
+            onMouseDown={(e) => e.stopPropagation()} // Prevent closing when clicking inside
+          >
+            <div className="p-8">
+              <button
+                onClick={closeModal}
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+                aria-label="Close modal"
+              >
+                <X size={24} />
+              </button>
+
+              <div className="text-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Let's Talk</h2>
+                <p className="text-gray-600 dark:text-gray-400 mt-1">Send us a quick message.</p>
+              </div>
+
+              <form onSubmit={handleSubmit(onSubmit)} noValidate>
+                <div className="space-y-5">
+                  <div className="relative">
+                    <input
+                      id="name"
+                      type="text"
+                      {...register('name')}
+                      className={`peer w-full px-4 py-3 bg-gray-100 dark:bg-gray-800 rounded-lg text-gray-800 dark:text-gray-200 placeholder-transparent focus:outline-none focus:ring-2 ${errors.name ? 'focus:ring-red-500' : 'focus:ring-blue-600'}`}
+                      placeholder="Full Name"
+                    />
+                    <label htmlFor="name" className="absolute left-4 -top-3.5 text-gray-500 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3.5 peer-focus:-top-3.5 peer-focus:text-blue-600 peer-focus:text-sm">
+                      Full Name
+                    </label>
+                    {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>}
+                  </div>
+
+                  <div className="relative">
+                    <input
+                      id="email"
+                      type="email"
+                      {...register('email')}
+                      className={`peer w-full px-4 py-3 bg-gray-100 dark:bg-gray-800 rounded-lg text-gray-800 dark:text-gray-200 placeholder-transparent focus:outline-none focus:ring-2 ${errors.email ? 'focus:ring-red-500' : 'focus:ring-blue-600'}`}
+                      placeholder="Email Address"
+                    />
+                    <label htmlFor="email" className="absolute left-4 -top-3.5 text-gray-500 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3.5 peer-focus:-top-3.5 peer-focus:text-blue-600 peer-focus:text-sm">
+                      Email Address
+                    </label>
+                    {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+                  </div>
+
+                  <div className="relative">
+                    <textarea
+                      id="message"
+                      {...register('message')}
+                      rows={4}
+                      className={`peer w-full px-4 py-3 bg-gray-100 dark:bg-gray-800 rounded-lg text-gray-800 dark:text-gray-200 placeholder-transparent focus:outline-none focus:ring-2 resize-none ${errors.message ? 'focus:ring-red-500' : 'focus:ring-blue-600'}`}
+                      placeholder="Your Message"
+                    ></textarea>
+                    <label htmlFor="message" className="absolute left-4 -top-3.5 text-gray-500 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3.5 peer-focus:-top-3.5 peer-focus:text-blue-600 peer-focus:text-sm">
+                      Your Message
+                    </label>
+                    {errors.message && <p className="text-red-500 text-xs mt-1">{errors.message.message}</p>}
+                  </div>
+                </div>
+
+                <div className="mt-6">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full flex justify-center items-center bg-blue-600 text-white font-bold py-3 px-6 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  >
+                    {isSubmitting ? (
+                      <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Sending...</>
+                    ) : (
+                      <><Send className="mr-2 h-5 w-5" /> Send Message</>
+                    )}
+                  </button>
+                </div>
+              </form>
             </div>
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-800 mb-1">Email</label>
-              <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} required className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-gray-900" />
-            </div>
-            <div>
-              <label htmlFor="message" className="block text-sm font-medium text-gray-800 mb-1">Message</label>
-              <textarea id="message" name="message" value={formData.message} onChange={handleChange} required rows={5} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition resize-none text-gray-900"></textarea>
-            </div>
-          </div>
-          <div className="mt-6">
-            <button type="submit" disabled={isLoading} className="w-full flex justify-center items-center bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300 disabled:bg-blue-400 disabled:cursor-not-allowed">
-              {isLoading ? <LoaderCircle className="animate-spin" /> : 'Send Message'}
-            </button>
-          </div>
-          {status && <p className="text-center text-sm mt-4">{status}</p>}
-        </form>
-      </div>
-    </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 

@@ -44,7 +44,7 @@ const Header = () => {
     <header className={headerClasses}>
       <div className="container mx-auto px-4 py-6 flex justify-between items-center">
         <div className={`text-2xl font-bold ${textColor}`}>
-          <Link href="/">SIRCH SOLUTIONS KE</Link>
+          <Link href="/">DEVSIRCH HUB</Link>
         </div>
         <nav className="hidden md:flex items-center space-x-8">
           <Link href="/" className={`${linkColor} ${navLinkClasses}`}>Home</Link>
