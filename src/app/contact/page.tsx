@@ -9,6 +9,7 @@ import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Loader2, Send } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
+import Image from 'next/image';
 
 // Dynamically import the Map component to prevent SSR issues
 const Map = dynamic(
@@ -96,6 +97,26 @@ const ContactPage = () => {
   return (
     <>
       <Toaster position="top-right" />
+       {/* Hero Section */}
+       <section className="relative h-screen flex items-center justify-center">
+          <Image
+            src="/contactpageheroimage.png"
+            alt="Abstract network of connections"
+            layout="fill"
+            objectFit="cover"
+            className="z-0"
+          />
+          <div className="absolute inset-0 bg-black opacity-60 z-10"></div>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8 }}
+            className="relative z-20 container mx-auto px-4 text-center text-white">
+            <h1 className="text-5xl md:text-6xl font-bold mb-4">Contact Us</h1>
+            <p className="text-lg md:text-xl text-gray-200">We'd love to hear from you. Reach out to us for any inquiries.</p>
+          </motion.div>
+        </section>
+
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 sm:p-6 lg:p-8">
         <motion.div
           className="container mx-auto max-w-6xl bg-white rounded-2xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2"

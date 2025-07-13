@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
       from: 'onboarding@resend.dev', // This must be a verified domain on Resend
       to: 'your-email@example.com', // Change this to your actual email address
       subject: `New Contact Form Submission from ${name}`,
-      reply_to: email,
+      replyTo: email,
       html: `
         <p><strong>Name:</strong> ${name}</p>
         <p><strong>Email:</strong> ${email}</p>

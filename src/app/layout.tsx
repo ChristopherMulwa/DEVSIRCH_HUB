@@ -4,6 +4,7 @@ import "./globals.css";
 import Layout from "@/components/Layout";
 import { ModalProvider } from "@/context/ModalContext";
 import ContactModal from "@/components/ContactModal";
+import { Toaster } from 'react-hot-toast';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,6 +24,7 @@ export default function RootLayout({
         <ModalProvider>
           <Layout>{children}</Layout>
           <ContactModal />
+          <Toaster position="top-right" />
         </ModalProvider>
       </body>
     </html>

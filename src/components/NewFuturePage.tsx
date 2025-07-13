@@ -1,9 +1,35 @@
 "use client";
 
 import { useModal } from '@/context/ModalContext';
-import { ArrowRight, Check, Mail, Building, Users, BarChart, ShieldCheck, MessageSquareQuote } from 'lucide-react';
+import { ArrowRight, Check, Mail, Zap, GraduationCap, Briefcase, Users, Shield, BarChart, Wind } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
+import { motion } from 'framer-motion';
+import InteractiveTimeline from '@/components/InteractiveTimeline';
+
+// --- Timeline Data ---
+const timelineEvents = [
+  {
+    year: "Q3 2025",
+    title: "Launch of Strategic Procurement Desk",
+    description: "Official rollout of our partnership program for transparent and efficient ICT procurement and tender navigation."
+  },
+  {
+    year: "Q4 2025",
+    title: "SIRCH Academy: Early Access Program",
+    description: "Inviting our first cohort of students to experience our cutting-edge cybersecurity and cloud engineering courses."
+  },
+  {
+    year: "Q1 2026",
+    title: "Introduction of Managed SOC Services",
+    description: "Launching our Security Operations Center as a service to provide 24/7 threat monitoring and response for our clients."
+  },
+  {
+    year: "Q2 2026",
+    title: "Expansion into AI-Powered Business Analytics",
+    description: "Introducing a new suite of services focused on leveraging AI and machine learning for actionable business insights."
+  }
+];
 
 // --- Early Access Form Component ---
 const EarlyAccessForm = () => {
@@ -22,12 +48,12 @@ const EarlyAccessForm = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           email,
-          subject: 'New Early Access Signup',
+          subject: 'New Early Access Signup for SIRCH Academy',
           message: `${email} has signed up for early access.`
         }),
       });
       if (response.ok) {
-        setStatus('Success! You\'re on the list.');
+        setStatus('Success! You are on the list.');
         setEmail('');
       } else {
         const data = await response.json();
@@ -42,27 +68,31 @@ const EarlyAccessForm = () => {
   };
 
   return (
-    <div className="mt-8 bg-white p-6 rounded-xl shadow-2xl border border-gray-200">
-        <p className="font-bold text-lg text-gray-800">Be the first to know.</p>
-        <p className="text-sm text-gray-600 mb-4">Get early access, launch discounts, and free resources.</p>
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.4 }}
+      className="mt-8 bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-2xl border border-gray-200/50">
+        <p className="font-bold text-lg text-gray-900">Be the First to Know</p>
+        <p className="text-sm text-gray-700 mb-4">Get launch updates, early access discounts, and free resources.</p>
         <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-grow">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Your business email"
+                    placeholder="Enter your email"
                     required
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                    className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white/50 text-gray-900 placeholder-gray-500"
                 />
             </div>
-            <button type="submit" disabled={isLoading} className="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 disabled:bg-blue-400 flex-shrink-0">
-                {isLoading ? '...' : 'Get Early Access'}
+            <button type="submit" disabled={isLoading} className="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 disabled:bg-blue-400 flex-shrink-0 shadow-lg hover:shadow-blue-500/50">
+                {isLoading ? 'Joining...' : 'Get Early Access'}
             </button>
         </form>
-        {status && <p className="text-sm text-center mt-3 font-medium">{status}</p>}
-    </div>
+        {status && <p className="text-sm text-center mt-3 font-medium text-gray-800">{status}</p>}
+    </motion.div>
   );
 };
 
@@ -72,97 +102,122 @@ const NewFuturePage = () => {
   const { openModal } = useModal();
 
   return (
-    <div className="bg-white text-gray-800">
+    <div className="bg-gray-900 text-white">
       {/* 1. Hero Section */}
-      <section className="relative h-screen flex items-center justify-center text-center text-white">
-        <Image src="/FutureInitiativesHeroImage.png" alt="Abstract background" layout="fill" objectFit="cover" className="z-0" />
-        <div className="absolute inset-0 bg-black opacity-50 z-10"></div>
-        <div className="relative z-20 container mx-auto px-4">
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight">The Future of Your Business Starts Here.</h1>
-          <p className="mt-6 max-w-3xl mx-auto text-lg md:text-xl text-gray-200">
-            Discover the upcoming services designed to give you an unfair advantage in security, efficiency, and growth. Be the first to benefit.
+      <section className="relative min-h-screen flex items-center justify-center text-center overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-900 via-gray-800 to-black z-10 opacity-80"></div>
+        <Image src="/FutureInitiativesHeroImage.png" alt="Digital network connections" layout="fill" objectFit="cover" className="z-0 opacity-30" />
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8 }}
+          className="relative z-20 container mx-auto px-4 py-24">
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-300">
+            Innovating for Tomorrow
+          </h1>
+          <p className="mt-6 max-w-3xl mx-auto text-lg md:text-xl text-gray-300">
+            We are not just keeping pace; we are setting it. Discover our upcoming initiatives designed to propel your business into the future of technology and security.
           </p>
+        </motion.div>
+      </section>
+
+      {/* 2. Interactive Timeline Section */}
+      <section className="py-20 md:py-28">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold">Our Roadmap to the Future</h2>
+            <p className="text-lg text-gray-400 mt-4 max-w-3xl mx-auto">Follow our journey as we roll out transformative services and partnerships.</p>
+          </div>
+          <InteractiveTimeline events={timelineEvents} />
         </div>
       </section>
 
-      {/* 2. Initiative #1: SIRCH Academy */}
-      <section className="py-16 md:py-24 bg-gray-50">
+      {/* 3. Initiative Spotlight: SIRCH Academy */}
+      <section className="py-20 md:py-28 bg-black/20">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
-            <div className="order-2 md:order-1">
-              <h2 className="text-3xl md:text-4xl font-bold text-blue-600 mb-4">The SIRCH Academy</h2>
-              <h3 className="text-2xl md:text-3xl font-bold mb-6">Future-Proofing Your Workforce.</h3>
-              <p className="text-lg text-gray-600 mb-6">
-                In a rapidly evolving digital landscape, the greatest investment is in your people. The SIRCH Academy is a premier training ground designed to equip your teams with the critical skills needed to navigate modern challenges in security, data, and cloud technologies.
+            <motion.div 
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+              className="order-2 md:order-1">
+              <div className="inline-flex items-center bg-blue-500/10 text-blue-300 rounded-full px-4 py-1 mb-4 font-semibold">
+                <GraduationCap className="w-5 h-5 mr-2" />
+                Coming Soon: Q4 2025
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold mb-5">The SIRCH Academy</h2>
+              <p className="text-lg text-gray-300 mb-6">
+                Closing the skills gap is no longer optional. The SIRCH Academy is our commitment to fostering the next generation of tech talent in Kenya, offering hands-on, certified training in the most in-demand fields.
               </p>
-              <ul className="space-y-4">
-                <li className="flex items-start"><Check className="h-6 w-6 text-green-500 mr-3 flex-shrink-0 mt-1" /><span><span className="font-semibold">Advanced Cybersecurity Drills:</span> Move beyond theory with phishing simulations, incident response workshops, and secure coding practices.</span></li>
-                <li className="flex items-start"><Check className="h-6 w-6 text-green-500 mr-3 flex-shrink-0 mt-1" /><span><span className="font-semibold">AI & Data Literacy:</span> Empower your team to leverage AI tools responsibly and make data-driven decisions with our courses on data analytics and business intelligence.</span></li>
-                <li className="flex items-start"><Check className="h-6 w-6 text-green-500 mr-3 flex-shrink-0 mt-1" /><span><span className="font-semibold">Cloud & DevOps Mastery:</span> Unlock efficiency with hands-on training for AWS, Azure, and Google Cloud, coupled with modern DevOps methodologies.</span></li>
-              </ul>
+              <div className="space-y-4 text-gray-200">
+                <div className="flex items-start"><Shield className="h-6 w-6 text-blue-400 mr-4 flex-shrink-0 mt-1" /><span><span className="font-semibold">Cybersecurity Defense:</span> From ethical hacking to threat intelligence, become a certified security professional.</span></div>
+                <div className="flex items-start"><BarChart className="h-6 w-6 text-blue-400 mr-4 flex-shrink-0 mt-1" /><span><span className="font-semibold">Data & AI Analytics:</span> Master data science, machine learning, and AI implementation to drive business value.</span></div>
+                <div className="flex items-start"><Wind className="h-6 w-6 text-blue-400 mr-4 flex-shrink-0 mt-1" /><span><span className="font-semibold">Cloud Engineering:</span> Gain expertise in AWS, Azure, and GCP to build and manage scalable cloud infrastructure.</span></div>
+              </div>
               <EarlyAccessForm />
-            </div>
-            <div className="order-1 md:order-2">
-                <Image src="/CybersecurityAwarenessImage.png" alt="Mockup of SIRCH Academy dashboard" width={600} height={450} className="rounded-xl shadow-2xl" />
-            </div>
+            </motion.div>
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+              className="order-1 md:order-2 flex justify-center">
+                <Image src="/CybersecurityAwarenessImage.png" alt="Students learning in a modern classroom" width={550} height={550} className="rounded-2xl shadow-2xl shadow-blue-500/20" />
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* 3. Initiative #2: Procurement Desk */}
-      <section className="py-16 md:py-24">
+      {/* 4. Initiative Spotlight: Strategic Procurement */}
+      <section className="py-20 md:py-28">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
-            <div>
-              <Image src="/ICTEquipmentProcurementImage.png" alt="Illustration of a seamless supply chain" width={600} height={450} className="rounded-xl shadow-2xl" />
-            </div>
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-purple-600 mb-4">Strategic Procurement Desk</h2>
-              <h3 className="text-2xl md:text-3xl font-bold mb-6">Procurement, Perfected.</h3>
-              <p className="text-lg text-gray-600 mb-6">
-                Navigating the complexities of ICT procurement and government tenders is a full-time job. Let us handle it for you. We provide a transparent, reliable, and strategic partnership to ensure you get the best value and the right technology, every time.
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+              className="flex justify-center">
+              <Image src="/ICTEquipmentProcurementImage.png" alt="Seamless supply chain logistics" width={550} height={550} className="rounded-2xl shadow-2xl shadow-teal-500/20" />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}>
+              <div className="inline-flex items-center bg-teal-500/10 text-teal-300 rounded-full px-4 py-1 mb-4 font-semibold">
+                <Briefcase className="w-5 h-5 mr-2" />
+                Partnerships Open Now
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold mb-5">Strategic Procurement Desk</h2>
+              <p className="text-lg text-gray-300 mb-8">
+                Simplify your supply chain and gain a competitive edge in tendering. Our procurement desk offers a transparent, efficient, and cost-effective way to acquire ICT assets and win major contracts.
               </p>
-              <ul className="space-y-4 mb-8">
-                <li className="flex items-start"><Check className="h-6 w-6 text-green-500 mr-3 flex-shrink-0 mt-1" /><span><span className="font-semibold">Expert Tender Navigation:</span> Increase your success rate with our specialized guidance.</span></li>
-                <li className="flex items-start"><Check className="h-6 w-6 text-green-500 mr-3 flex-shrink-0 mt-1" /><span><span className="font-semibold">Tier-1 Equipment Access:</span> Leverage our network for competitive pricing on top-tier hardware and software.</span></li>
-                <li className="flex items-start"><Check className="h-6 w-6 text-green-500 mr-3 flex-shrink-0 mt-1" /><span><span className="font-semibold">End-to-End Reliability:</span> From sourcing to delivery and installation, we manage the entire lifecycle.</span></li>
-              </ul>
-              <button onClick={() => openModal('Strategic Procurement Desk')} className="bg-purple-600 text-white font-bold py-4 px-8 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-300 text-lg inline-flex items-center shadow-lg">
-                Become a Preferred Partner <ArrowRight className="ml-3 h-6 w-6" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10 text-center">
+                <div className="bg-gray-800 p-6 rounded-lg"><h3 className="text-2xl font-bold text-teal-400">15%+</h3><p className="text-gray-400">Average Cost Savings</p></div>
+                <div className="bg-gray-800 p-6 rounded-lg"><h3 className="text-2xl font-bold text-teal-400">40%</h3><p className="text-gray-400">Increased Tender Success Rate</p></div>
+              </div>
+              <button onClick={() => openModal('Strategic Procurement Partnership')} className="w-full md:w-auto bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-bold py-4 px-8 rounded-full hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-teal-500 transition-all duration-300 text-lg inline-flex items-center justify-center shadow-lg hover:shadow-teal-500/40">
+                Become a Partner <ArrowRight className="ml-3 h-6 w-6" />
               </button>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
-      
-      {/* 4. Trust Section */}
-      <section className="py-16 md:py-24 bg-gray-50">
-          <div className="container mx-auto px-4 text-center">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Trust Our Vision?</h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-12">Our initiatives are led by seasoned professionals with a deep understanding of the technology landscape and a passion for client success.</p>
-              <div className="flex flex-col sm:flex-row justify-center items-center gap-8">
-                  <div className="text-center">
-                      <Image src="https://placehold.co/128x128/000/FFF?text=CM" alt="Headshot of Christopher Mulwa" width={128} height={128} className="rounded-full mx-auto mb-4 border-4 border-white shadow-lg" />
-                      <h3 className="text-xl font-bold">Christopher Mulwa</h3>
-                      <p className="text-blue-600 font-semibold">Founder & Lead Strategist</p>
-                      <p className="text-gray-600 max-w-xs mx-auto mt-2">A certified cybersecurity expert dedicated to building secure and resilient digital futures for our partners.</p>
-                  </div>
-              </div>
-          </div>
-      </section>
 
-      {/* 5. Horizon Section */}
-      <section className="py-16 text-center">
-          <div className="container mx-auto px-4">
-              <h3 className="text-2xl font-bold text-gray-500 tracking-widest uppercase mb-6">On The Horizon</h3>
-              <div className="flex justify-center items-center gap-x-8 gap-y-4 flex-wrap text-gray-700 font-semibold text-lg">
-                  <span>Managed SOC Services</span>
-                  <span className="text-gray-300 hidden sm:inline">|</span>
-                  <span>AI-Powered Business Analytics</span>
-                  <span className="text-gray-300 hidden sm:inline">|</span>
-                  <span>IoT Solutions</span>
-              </div>
-          </div>
+      {/* 5. Call to Action Section */}
+      <section className="py-20">
+        <div className="container mx-auto px-4 text-center">
+          <Zap className="w-16 h-16 mx-auto text-yellow-400 mb-4" />
+          <h2 className="text-4xl md:text-5xl font-bold mb-4">Ready to Shape the Future?</h2>
+          <p className="text-lg text-gray-400 max-w-2xl mx-auto mb-10">
+            Whether you're looking to upskill your team, streamline procurement, or simply stay ahead of the curve, let's connect. Our future initiatives are your future advantages.
+          </p>
+          <button onClick={() => openModal('General Inquiry about Future Initiatives')} className="bg-white text-gray-900 font-bold py-4 px-10 rounded-full hover:bg-gray-200 transition-transform transform hover:scale-105 duration-300 text-lg inline-flex items-center shadow-2xl">
+            Contact Us Today <ArrowRight className="ml-3" />
+          </button>
+        </div>
       </section>
     </div>
   );
