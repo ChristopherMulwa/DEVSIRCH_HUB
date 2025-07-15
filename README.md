@@ -63,6 +63,6 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## 📞 Contact
 
-Christopher Mulwa - [mulwachristopher7@gmail.com](mailto:mulwachristopher7@gmail.com)
+Christopher Mulwa
 
 Project Link: [https://github.com/ChristopherMulwa/DevSirch-Hub](https://github.com/ChristopherMulwa/DevSirch-Hub)
