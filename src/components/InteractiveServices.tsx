@@ -3,59 +3,58 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { ShieldCheck, Briefcase, Code, Network, ShoppingCart, ArrowRight, ChevronDown } from 'lucide-react';
-import { useModal } from '@/context/ModalContext';
+import Link from 'next/link';
 
 const services = [
   {
-    slug: 'cybersecurity',
+    slug: '/services/cybersecurity',
     title: 'Cybersecurity Awareness',
     description: 'Expert training to turn your team into a security asset.',
     longDescription: "Transform your employees into your first line of defense. Our engaging training programs have been shown to reduce successful phishing attacks by up to 95%. We instill a lasting culture of security, protecting your data, reputation, and bottom line.",
     icon: ShieldCheck,
     imageUrl: '/CybersecurityAwarenessImage.png',
-    ctaText: 'Get a Security Audit',
+    ctaText: 'Learn More',
   },
   {
-    slug: 'it-consulting',
+    slug: '/services/it-consulting',
     title: 'IT Consulting & Support',
     description: 'Strategic guidance to align your technology with your business goals.',
     longDescription: "Leverage our expertise to create a strategic IT roadmap that drives growth and efficiency. From infrastructure audits to 24/7 support, we ensure your technology is a competitive advantage, not a bottleneck.",
     icon: Briefcase,
     imageUrl: '/ITConsulting&SupportImage.png',
-    ctaText: 'Book a Strategy Call',
+    ctaText: 'Learn More',
   },
   {
-    slug: 'development',
+    slug: '/services/website-and-software-development',
     title: 'Website & Software Development',
     description: 'Bespoke digital solutions that perform and impress.',
     longDescription: "From stunning websites to robust enterprise software, we build custom solutions that are scalable, secure, and perfectly aligned with your business objectives. Let's build the tool that gives you a competitive edge.",
     icon: Code,
     imageUrl: '/Website&SoftwareDevelopmentImage.png',
-    ctaText: 'Discuss Your Project',
+    ctaText: 'Learn More',
   },
   {
-    slug: 'infrastructure',
+    slug: '/services/ict-infrastructure-setup',
     title: 'ICT Infrastructure Setup',
     description: 'Building the robust and scalable backbone for your business.',
     longDescription: "A solid foundation is key to digital success. We design, implement, and manage robust ICT infrastructure, including networking, cloud solutions, and data centers, ensuring your technology backbone can support your ambitions.",
     icon: Network,
     imageUrl: '/ICTInfrastructureSetupImage.png',
-    ctaText: 'Design Your Infrastructure',
+    ctaText: 'Learn More',
   },
   {
-    slug: 'procurement',
+    slug: '/services/ict-equipment-procurement',
     title: 'ICT Equipment Procurement',
     description: 'Streamlined procurement for all your hardware and software needs.',
     longDescription: "Leverage our network of trusted partners to procure high-quality ICT equipment at competitive prices. We handle the entire process, from sourcing to installation, saving you time, money, and hassle.",
     icon: ShoppingCart,
     imageUrl: '/ICTEquipmentProcurementImage.png',
-    ctaText: 'Get a Procurement Quote',
+    ctaText: 'Learn More',
   },
 ];
 
 const InteractiveServices = () => {
   const [selectedSlug, setSelectedSlug] = useState(services[0].slug);
-  const { openModal } = useModal();
 
   const selectedService = services.find(s => s.slug === selectedSlug) || services[0];
 
@@ -120,13 +119,10 @@ const InteractiveServices = () => {
               <p className="text-gray-700 leading-relaxed mb-6 flex-grow">{selectedService.longDescription}</p>
               
               {/* CTA */}
-              <button
-                onClick={() => openModal(selectedService.title)}
-                className="group mt-auto inline-flex items-center justify-center text-center px-8 py-4 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:-translate-y-1 shadow-md hover:shadow-lg"
-              >
+              <Link href={selectedService.slug} className="group mt-auto inline-flex items-center justify-center text-center px-8 py-4 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:-translate-y-1 shadow-md hover:shadow-lg">
                 {selectedService.ctaText}
                 <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
-              </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -172,13 +168,10 @@ const InteractiveServices = () => {
                       <p className="text-gray-700 leading-relaxed mb-6">{service.longDescription}</p>
                       
                       {/* CTA */}
-                      <button
-                        onClick={() => openModal(service.title)}
-                        className="group mt-auto inline-flex items-center justify-center text-center w-full px-6 py-4 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-all duration-300"
-                      >
+                      <Link href={service.slug} className="group mt-auto inline-flex items-center justify-center text-center w-full px-6 py-4 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-all duration-300">
                         {service.ctaText}
                         <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
-                      </button>
+                      </Link>
                     </div>
                   </div>
                 </div>

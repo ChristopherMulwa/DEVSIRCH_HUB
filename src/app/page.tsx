@@ -14,9 +14,9 @@ export default function Home() {
         <Image
           src="/homepagehero.png"
           alt="A modern office with a team collaborating"
-          layout="fill"
-          objectFit="cover"
-          className="z-0"
+          fill
+          className="z-0 object-cover"
+          priority
         />
         <div className="absolute inset-0 bg-black opacity-50 z-10"></div>
         <motion.div 
