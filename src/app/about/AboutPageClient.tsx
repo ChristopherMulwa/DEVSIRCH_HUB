@@ -127,7 +127,7 @@ const AboutPageClient = () => {
               <h3 className="text-3xl font-bold text-gray-900">Christopher Mulwa</h3>
               <p className="text-blue-600 font-semibold mt-1">Founder & Principal IT Consultant</p>
               <p className="mt-6 text-gray-700 leading-relaxed">
-                "I started DEVSIRCH HUB with a single mission: to provide businesses in Kenya with the robust, secure, and innovative IT solutions they need to thrive in a digital-first world. Technology should be an asset, not a vulnerability, and I'm passionate about building that reality for our clients."
+                &quot;I started DEVSIRCH HUB with a single mission: to provide businesses in Kenya with the robust, secure, and innovative IT solutions they need to thrive in a digital-first world. Technology should be an asset, not a vulnerability, and I&apos;m passionate about building that reality for our clients.&quot;
               </p>
               <p className="mt-4 text-gray-700 leading-relaxed">
                 With a deep-rooted expertise in cybersecurity and software development, I am personally invested in the success of every project. When you partner with us, you get a dedicated expert committed to understanding your challenges and delivering solutions that are not just effective, but transformative.
@@ -181,9 +181,9 @@ const AboutPageClient = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
           className="container mx-auto px-4 py-20 text-center">
-          <h2 className="text-4xl font-bold mb-4">Ready to Secure & Scale Your Business?</h2>
+          <h2 className="text-4xl font-bold mb-4">Ready to Secure &amp; Scale Your Business?</h2>
           <p className="text-blue-100 text-lg max-w-2xl mx-auto mb-8">
-            Let's discuss how our expertise can help you achieve your technology goals. Get in touch for a free, no-obligation consultation.
+            Let&apos;s discuss how our expertise can help you achieve your technology goals. Get in touch for a free, no-obligation consultation.
           </p>
           <Link href="/contact" className="bg-white text-blue-600 font-bold py-4 px-8 rounded-full hover:bg-gray-200 transition-transform transform hover:scale-105 duration-300 inline-flex items-center shadow-lg">
             Contact Us <ArrowRight className="ml-2 h-5 w-5" />

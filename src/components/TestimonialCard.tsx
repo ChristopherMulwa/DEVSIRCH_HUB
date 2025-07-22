@@ -41,7 +41,7 @@ const TestimonialCard = () => {
         >
           <div className="p-8 flex-grow">
             <MessageSquareQuote className="w-12 h-12 text-blue-500 dark:text-blue-400 mb-6" />
-            <p className="text-gray-600 dark:text-gray-300 italic mb-6">"{testimonial.quote}"</p>
+            <p className="text-gray-600 dark:text-gray-300 italic mb-6">&quot;{testimonial.quote}&quot;</p>
           </div>
           <div className="bg-gray-50 dark:bg-gray-700/50 p-6 mt-auto">
             <div className="flex items-center">

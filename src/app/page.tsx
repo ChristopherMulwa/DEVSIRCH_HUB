@@ -2,8 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { ShieldCheck, Briefcase, Code, Network, ShoppingCart, ArrowRight } from 'lucide-react';
-import TestimonialCard from '@/components/TestimonialCard';
+import { ShieldCheck, Briefcase, Code, Network, ShoppingCart, ArrowRight, Award, Users, TrendingUp } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Home() {
@@ -198,16 +197,56 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Testimonial Snippet */}
+      {/* Our Commitment to You */}
       <section className="py-20 bg-gray-50">
-        <div className="container mx-auto px-4 text-center">
+        <div className="container mx-auto px-4">
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="text-4xl font-bold text-center text-gray-800 mb-16">What Our Clients Say</motion.h2>
-          <TestimonialCard />
+            className="text-4xl font-bold text-center text-gray-800 mb-16">Our Commitment to You</motion.h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              whileHover={{ scale: 1.05 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="flex flex-col items-center">
+              <div className="bg-blue-600 rounded-full p-4 mb-4">
+                <Award className="w-10 h-10 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-800 mb-3">Uncompromising Quality</h3>
+              <p className="text-gray-600">We are dedicated to delivering solutions that are not just effective but also robust, scalable, and meticulously crafted to meet the highest standards of excellence.</p>
+            </motion.div>
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              whileHover={{ scale: 1.05 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="flex flex-col items-center">
+              <div className="bg-blue-600 rounded-full p-4 mb-4">
+                <Users className="w-10 h-10 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-800 mb-3">Client-Centric Partnership</h3>
+              <p className="text-gray-600">Your success is our success. We work collaboratively with you, ensuring open communication, transparency, and a deep understanding of your unique goals.</p>
+            </motion.div>
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              whileHover={{ scale: 1.05 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="flex flex-col items-center">
+              <div className="bg-blue-600 rounded-full p-4 mb-4">
+                <TrendingUp className="w-10 h-10 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-800 mb-3">Future-Proof Solutions</h3>
+              <p className="text-gray-600">Technology is always evolving, and so are we. We build solutions that are not only powerful today but are also designed to be adaptable and ready for tomorrow&apos;s challenges.</p>
+            </motion.div>
+          </div>
         </div>
       </section>
 

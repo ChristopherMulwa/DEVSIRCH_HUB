@@ -1,7 +1,7 @@
 "use client";
 
 import { useModal } from '@/context/ModalContext';
-import { ArrowRight, Check, Mail, Zap, GraduationCap, Briefcase, Users, Shield, BarChart, Wind } from 'lucide-react';
+import { ArrowRight, Mail, Zap, GraduationCap, Briefcase, Shield, BarChart, Wind } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
@@ -60,6 +60,7 @@ const EarlyAccessForm = () => {
         setStatus(data.message || 'An error occurred.');
       }
     } catch (error) {
+      console.error('Early access submission error:', error);
       setStatus('Failed to submit. Please try again.');
     } finally {
       setIsLoading(false);
@@ -212,7 +213,7 @@ const NewFuturePage = () => {
           <Zap className="w-16 h-16 mx-auto text-yellow-400 mb-4" />
           <h2 className="text-4xl md:text-5xl font-bold mb-4">Ready to Shape the Future?</h2>
           <p className="text-lg text-gray-400 max-w-2xl mx-auto mb-10">
-            Whether you're looking to upskill your team, streamline procurement, or simply stay ahead of the curve, let's connect. Our future initiatives are your future advantages.
+            Whether you&apos;re looking to upskill your team, streamline procurement, or simply stay ahead of the curve, let&apos;s connect. Our future initiatives are your future advantages.
           </p>
           <button onClick={() => openModal('General Inquiry about Future Initiatives')} className="bg-white text-gray-900 font-bold py-4 px-10 rounded-full hover:bg-gray-200 transition-transform transform hover:scale-105 duration-300 text-lg inline-flex items-center shadow-2xl">
             Contact Us Today <ArrowRight className="ml-3" />

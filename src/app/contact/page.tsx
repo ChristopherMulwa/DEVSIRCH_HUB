@@ -66,7 +66,7 @@ const ContactPage = () => {
 
       toast.success('Message sent successfully!', { id: toastId });
       reset();
-    } catch (error) {
+    } catch {
       toast.error('Failed to send message. Please try again.', { id: toastId });
     } finally {
       setIsSubmitting(false);
@@ -113,7 +113,7 @@ const ContactPage = () => {
             transition={{ duration: 0.8 }}
             className="relative z-20 container mx-auto px-4 text-center text-white">
             <h1 className="text-5xl md:text-6xl font-bold mb-4">Contact Us</h1>
-            <p className="text-lg md:text-xl text-gray-200">We'd love to hear from you. Reach out to us for any inquiries.</p>
+            <p className="text-lg md:text-xl text-gray-200">We&apos;d love to hear from you. Reach out to us for any inquiries.</p>
           </motion.div>
         </section>
 
@@ -126,9 +126,9 @@ const ContactPage = () => {
         >
           {/* Left Column: Form */}
           <motion.div className="p-8 sm:p-12" variants={itemVariants}>
-            <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-3">Let's Connect</h1>
+            <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-3">Let&apos;s Connect</h1>
             <p className="text-gray-600 mb-8">
-              Have a project in mind or just want to say hello? Fill out the form and we'll get back to you.
+              Have a project in mind or just want to say hello? Fill out the form and we&apos;ll get back to you.
             </p>
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
                 {/* Honeypot field */}

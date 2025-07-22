@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { Eye, ShieldOff, BarChart, Zap, GitBranch } from 'lucide-react';
+import { Eye, ShieldOff, BarChart, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const offerings = [
@@ -82,7 +82,7 @@ const CybersecurityClientPage = () => {
           <div className="max-w-4xl mx-auto text-center mb-16 md:mb-20">
             <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">The High Stakes of Digital Security</h2>
             <p className="text-lg text-gray-400 leading-relaxed">
-              In today's interconnected world, a single vulnerability can lead to devastating financial and reputational damage. Proactive cybersecurity is not just an IT issue—it's a fundamental business requirement for protecting your data, your customers, and your future.
+              In today&apos;s interconnected world, a single vulnerability can lead to devastating financial and reputational damage. Proactive cybersecurity is not just an IT issue—it&apos;s a fundamental business requirement for protecting your data, your customers, and your future.
             </p>
           </div>
 
@@ -134,7 +134,7 @@ const CybersecurityClientPage = () => {
           <div className="mt-20 md:mt-24 text-center bg-gray-800 p-8 md:p-12 rounded-lg border border-gray-700">
             <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">Ready to Fortify Your Business?</h2>
             <p className="text-lg text-gray-400 mb-8 max-w-2xl mx-auto">
-              Don't wait for a threat to become a crisis. Let's build a resilient security strategy for your organization together.
+                                                        Don&apos;t wait for a threat to become a crisis. Let&apos;s build a resilient security strategy for your organization together.
             </p>
             <Link href="/contact" className="bg-blue-600 text-white font-bold py-3 px-6 sm:py-4 sm:px-8 rounded-full hover:bg-blue-700 transition-all duration-300 shadow-lg text-base sm:text-lg">
               Get a Free Security Consultation

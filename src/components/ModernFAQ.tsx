@@ -80,7 +80,7 @@ const ModernFAQ = () => {
           <HelpCircle className="w-16 h-16 mx-auto text-blue-600 mb-4" />
           <h2 className="text-4xl font-bold text-gray-800 dark:text-white">Frequently Asked Questions</h2>
           <p className="text-lg text-gray-600 dark:text-gray-400 mt-4 max-w-2xl mx-auto">
-            Have questions? We have answers. If you can't find what you're looking for, feel free to contact us.
+            Have questions? We have answers. If you can&apos;t find what you&apos;re looking for, feel free to contact us.
           </p>
         </div>
         <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">

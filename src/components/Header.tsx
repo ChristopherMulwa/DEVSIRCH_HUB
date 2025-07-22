@@ -27,6 +27,7 @@ const Header = () => {
     if (isOpen) {
       setIsOpen(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
   // Effect to lock body scroll when mobile menu is open
@@ -40,6 +41,10 @@ const Header = () => {
       document.body.style.overflow = 'auto';
     };
   }, [isOpen]);
+
+  const handleMobileLinkClick = () => {
+    setIsOpen(false);
+  };
 
   const navLinks = [
     { name: 'Home', href: '/' },
@@ -168,7 +173,7 @@ const Header = () => {
 
             {/* Mobile Menu Button */}
             <div className="md:hidden">
-              <button onClick={() => setIsOpen(!isOpen)} aria-label="Toggle menu">
+              <button onClick={() => setIsOpen(!isOpen)} aria-label="Toggle menu" className={isScrolled ? 'text-gray-800' : 'text-white'}>
                 <Menu size={28} />
               </button>
             </div>
@@ -234,7 +239,7 @@ const Header = () => {
                                 <ul className="py-2 space-y-2">
                                   {link.dropdown.map(item => (
                                     <li key={item.name}>
-                                      <Link href={item.href} className="block text-gray-600 hover:text-blue-600 transition-colors">
+                                      <Link href={item.href} onClick={handleMobileLinkClick} className="block text-gray-600 hover:text-blue-600 transition-colors">
                                         {item.name}
                                       </Link>
                                     </li>
@@ -245,7 +250,7 @@ const Header = () => {
                           </AnimatePresence>
                         </div>
                       ) : (
-                        <Link href={link.href} className="block py-2 text-xl font-medium text-gray-800 hover:text-blue-600 transition-colors">
+                        <Link href={link.href} onClick={handleMobileLinkClick} className="block py-2 text-xl font-medium text-gray-800 hover:text-blue-600 transition-colors">
                           {link.name}
                         </Link>
                       )}
@@ -254,7 +259,7 @@ const Header = () => {
                 </motion.ul>
               </nav>
               <div className="p-6 border-t">
-                <Link href="/contact" className="w-full text-center bg-blue-600 text-white font-bold py-3 px-6 rounded-full hover:bg-blue-700 transition-all duration-300 shadow-lg block">
+                <Link href="/contact" onClick={handleMobileLinkClick} className="w-full text-center bg-blue-600 text-white font-bold py-3 px-6 rounded-full hover:bg-blue-700 transition-all duration-300 shadow-lg block">
                   Contact Us
                 </Link>
               </div>

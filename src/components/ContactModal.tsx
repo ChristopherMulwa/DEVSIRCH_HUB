@@ -123,7 +123,7 @@ const ContactModal = () => {
                   >
                     <CheckCircle className="w-20 h-20 text-green-400 mx-auto mb-6" />
                     <h2 className="text-3xl font-bold text-white">Message Sent!</h2>
-                    <p className="text-gray-400 mt-3">Thank you for reaching out. We'll get back to you shortly.</p>
+                    <p className="text-gray-400 mt-3">Thank you for reaching out. We&apos;ll get back to you shortly.</p>
                     <button
                       onClick={handleClose}
                       className="mt-8 bg-green-500 text-white font-bold py-3 px-8 rounded-full hover:bg-green-600 transition-all duration-300"

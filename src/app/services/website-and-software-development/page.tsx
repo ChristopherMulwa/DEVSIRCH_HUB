@@ -104,7 +104,7 @@ const DevelopmentPage = () => {
           <div className="mt-20 text-center">
             <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-6">Have a Project in Mind?</h2>
             <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
-              Let's discuss your ideas and how we can turn them into a reality. Contact us today for a free consultation and quote.
+              Let&apos;s discuss your ideas and how we can turn them into a reality. Contact us today for a free consultation and quote.
             </p>
             <Link href="/contact" className="bg-blue-600 text-white font-bold py-4 px-8 rounded-full hover:bg-blue-700 transition-all duration-300 shadow-lg text-lg">
               Start Your Project
