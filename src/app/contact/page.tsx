@@ -10,6 +10,7 @@ import { Mail, Phone, MapPin, Loader2, Send } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
 import Image from 'next/image';
+import Link from 'next/link';
 
 // Dynamically import the Map component to prevent SSR issues
 const Map = dynamic(
@@ -199,6 +200,21 @@ const ContactPage = () => {
                   Your Message
                 </label>
                 {errors.message && <p className="text-red-500 text-xs mt-1">{errors.message.message}</p>}
+              </div>
+
+              <div className="relative mb-6">
+                <div className="flex items-center">
+                  <input
+                    id="consent"
+                    type="checkbox"
+                    {...register('consent')}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <label htmlFor="consent" className="ml-2 block text-sm text-gray-900">
+                    I agree to the <Link href="/privacy-policy" className="text-blue-600 hover:underline">Privacy Policy</Link>.
+                  </label>
+                </div>
+                {errors.consent && <p className="text-red-500 text-xs mt-1">{errors.consent.message}</p>}
               </div>
 
               <motion.button
