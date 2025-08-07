@@ -58,6 +58,7 @@ const Header = () => {
         { name: 'Website & Software Development', href: '/services/website-and-software-development' },
         { name: 'ICT Infrastructure Setup', href: '/services/ict-infrastructure-setup' },
         { name: 'ICT Equipment Procurement', href: '/services/ict-equipment-procurement' },
+        { name: 'Governance, Risk & Compliance', href: '/services/grc' },
       ]
     },
     { name: 'Future Initiatives', href: '/future' },

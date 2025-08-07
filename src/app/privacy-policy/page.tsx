@@ -24,7 +24,7 @@ const PrivacyPolicyPage = () => {
                 1. Introduction
               </h2>
               <p className="mt-4 text-gray-700 leading-relaxed">
-                Welcome to DEVSIRCH HUB ("we," "our," "us"). We are committed to protecting your privacy and handling your personal data in an open and transparent manner. This Privacy Policy explains how we collect, use, process, and safeguard your information when you visit our website, <code>devsirchhub.co.ke</code> (the "Site").
+                Welcome to DEVSIRCH HUB (&quot;we,&quot; &quot;our,&quot; &quot;us&quot;). We are committed to protecting your privacy and handling your personal data in an open and transparent manner. This Privacy Policy explains how we collect, use, process, and safeguard your information when you visit our website, <code>devsirchhub.co.ke</code> (the &quot;Site&quot;).
               </p>
               <p className="mt-2 text-gray-700 leading-relaxed">
                 This policy is prepared in compliance with the <strong>Kenya Data Protection Act, 2019 (DPA)</strong>. By using our Site, you acknowledge that you have read and understood this Privacy Policy.

@@ -59,7 +59,7 @@ const ModernCTA = () => {
               className="absolute inset-0 w-full h-full object-cover"
               src="https://images.unsplash.com/photo-1521737852567-6949f3f9f2b5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"
               alt="A team of professionals collaborating"
-              layout="fill"
+              fill
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent lg:bg-gradient-to-r lg:from-black/50 lg:to-transparent"></div>
             

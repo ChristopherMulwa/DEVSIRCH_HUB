@@ -24,7 +24,7 @@ const TermsOfServicePage = () => {
                 1. Agreement to Terms
               </h2>
               <p className="mt-4 text-gray-700 leading-relaxed">
-                By accessing or using the DEVSIRCH HUB website, located at <code>devsirchhub.co.ke</code> (the "Site"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, you must not access or use the Site.
+                By accessing or using the DEVSIRCH HUB website, located at <code>devsirchhub.co.ke</code> (the &quot;Site&quot;), you agree to be bound by these Terms of Service (&quot;Terms&quot;). If you do not agree to these Terms, you must not access or use the Site.
               </p>
             </section>
 
@@ -57,7 +57,7 @@ const TermsOfServicePage = () => {
                 4. Limitation of Liability
               </h2>
               <p className="mt-4 text-gray-700 leading-relaxed">
-                The Site is provided "as is." In no event shall DEVSIRCH HUB be held liable for any damages arising out of or in any way connected with your use of this Site.
+                The Site is provided &quot;as is.&quot; In no event shall DEVSIRCH HUB be held liable for any damages arising out of or in any way connected with your use of this Site.
               </p>
             </section>
 

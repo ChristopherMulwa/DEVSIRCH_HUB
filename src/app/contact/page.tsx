@@ -103,9 +103,8 @@ const ContactPage = () => {
           <Image
             src="/contactpageheroimage.png"
             alt="Abstract network of connections"
-            layout="fill"
-            objectFit="cover"
-            className="z-0"
+            fill
+            className="z-0 object-cover"
           />
           <div className="absolute inset-0 bg-black opacity-60 z-10"></div>
           <motion.div 

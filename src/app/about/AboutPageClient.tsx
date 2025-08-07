@@ -76,9 +76,8 @@ const AboutPageClient = () => {
         <Image
           src="/AboutUsHero.png"
           alt="About Us Hero Image"
-          layout="fill"
-          objectFit="cover"
-          className="absolute inset-0"
+          fill
+          className="absolute inset-0 object-cover"
         />
         <div className="absolute inset-0 bg-black opacity-50"></div>
         <motion.div 

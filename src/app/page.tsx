@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { ShieldCheck, Briefcase, Code, Network, ShoppingCart, ArrowRight, Award, Users, TrendingUp } from 'lucide-react';
+import { ShieldCheck, Briefcase, Code, Network, ShoppingCart, ArrowRight, Award, Users, TrendingUp, Landmark } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Home() {
@@ -116,13 +116,28 @@ export default function Home() {
                 Read More <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </motion.div>
-            {/* Explore All Services */}
+            {/* Service 6 */}
             <motion.div 
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               whileHover={{ scale: 1.05 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.6 }}
+              className="group bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300">
+              <Landmark className="w-16 h-16 mx-auto text-blue-600 mb-6" />
+              <h3 className="text-2xl font-bold text-gray-800 mb-4 text-center">Governance, Risk & Compliance</h3>
+              <p className="text-gray-600 text-center mb-6">Navigate the complex regulatory landscape with our comprehensive GRC solutions.</p>
+              <Link href="/services/grc" className="text-blue-600 font-semibold flex items-center justify-center group-hover:text-blue-800 transition-colors">
+                Read More <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
+            </motion.div>
+            {/* Explore All Services */}
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              whileHover={{ scale: 1.05 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.7 }}
               className="bg-gradient-to-br from-blue-600 to-blue-800 p-8 rounded-xl shadow-lg flex flex-col justify-center items-center text-white text-center transform hover:-translate-y-2 transition-all duration-300">
               <h3 className="text-3xl font-bold mb-6">Explore All Our Services</h3>
               <Link href="/services" className="bg-white text-blue-700 font-bold py-4 px-8 rounded-full hover:bg-gray-100 transition-transform transform hover:scale-105 duration-300 flex items-center shadow-md">

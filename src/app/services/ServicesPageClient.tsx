@@ -62,9 +62,8 @@ const ServicesPageClient = () => {
           <Image
             src="/ServicesHero.png"
             alt="Abstract digital network"
-            layout="fill"
-            objectFit="cover"
-            className="z-0"
+            fill
+            className="z-0 object-cover"
           />
           <div className="absolute inset-0 bg-black opacity-60 z-10"></div>
           <motion.div 

@@ -107,7 +107,7 @@ const NewFuturePage = () => {
       {/* 1. Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center text-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-gray-900 via-gray-800 to-black z-10 opacity-80"></div>
-        <Image src="/FutureInitiativesHeroImage.png" alt="Digital network connections" layout="fill" objectFit="cover" className="z-0 opacity-30" />
+        <Image src="/FutureInitiativesHeroImage.png" alt="Digital network connections" fill className="z-0 opacity-30 object-cover" />
         <motion.div 
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
