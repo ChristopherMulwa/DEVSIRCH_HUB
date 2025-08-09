@@ -76,7 +76,7 @@ const ITConsultingPage = () => {
         }}
       />
 
-      <TrustSignals className="bg-gray-100 dark:bg-gray-800/40" />
+      <TrustSignals className="bg-gray-100 dark:bg-gray-800/40" variant="it" />
       {/* Hero Section */}
       <section className="relative h-[60vh] flex items-center justify-center text-white">
         <Image 

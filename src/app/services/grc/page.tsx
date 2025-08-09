@@ -53,7 +53,7 @@ export default function GRCPage() {
         }}
       />
 
-      <TrustSignals className="bg-gray-50 dark:bg-gray-900/40" />
+      <TrustSignals className="bg-gray-50 dark:bg-gray-900/40" variant="grc" />
       <GRCClientPage />
 
       <FAQSection

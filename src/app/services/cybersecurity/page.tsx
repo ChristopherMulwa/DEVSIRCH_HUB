@@ -52,7 +52,7 @@ const CybersecurityPage = () => {
         }}
       />
 
-      <TrustSignals className="bg-gray-900/30" />
+      <TrustSignals className="bg-gray-900/30" variant="cybersecurity" />
       <CybersecurityClientPage />
       <FAQSection
         title="Cybersecurity FAQs"
