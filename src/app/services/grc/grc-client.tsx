@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from 'react';
-import { Landmark, ShieldCheck, BarChart, FileText, ArrowRight, CheckCircle, Users, TrendingUp } from 'lucide-react';
+import { Landmark, ShieldCheck, BarChart, FileText, ArrowRight, CheckCircle, Users, TrendingUp, AlertTriangle, ClipboardCheck, ClipboardList } from 'lucide-react';
+import Icon from '@/components/ui/Icon';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -17,9 +18,9 @@ const GRCClientPage = () => {
       description:
         'We establish clear governance structures that align with your business objectives, ensuring accountability, transparency, and strategic alignment across your organization.',
       features: [
-        { icon: <FileText className="w-6 h-6 text-white" />, text: 'Policy & Procedure Development' },
-        { icon: <Users className="w-6 h-6 text-white" />, text: 'Board & Stakeholder Reporting' },
-        { icon: <TrendingUp className="w-6 h-6 text-white" />, text: 'Performance Monitoring' },
+        { icon: <Icon><FileText /></Icon>, text: 'Policy & Procedure Development' },
+        { icon: <Icon><Landmark /></Icon>, text: 'Roles, Committees & Reporting' },
+        { icon: <Icon><TrendingUp /></Icon>, text: 'Performance & Risk Monitoring' },
       ],
     },
     risk: {
@@ -27,9 +28,9 @@ const GRCClientPage = () => {
       description:
         'Our experts help you identify, assess, and mitigate risks before they impact your business. We provide a comprehensive view of your risk landscape to enable informed decision-making.',
       features: [
-        { icon: <ShieldCheck className="w-6 h-6 text-white" />, text: 'Enterprise Risk Assessments' },
-        { icon: <BarChart className="w-6 h-6 text-white" />, text: 'Third-Party Risk Analysis' },
-        { icon: <CheckCircle className="w-6 h-6 text-white" />, text: 'Business Continuity Planning' },
+        { icon: <Icon><AlertTriangle /></Icon>, text: 'Enterprise Risk Assessments' },
+        { icon: <Icon><BarChart /></Icon>, text: 'Third-Party Risk Analysis' },
+        { icon: <Icon><CheckCircle /></Icon>, text: 'Business Continuity Planning' },
       ],
     },
     compliance: {
@@ -37,9 +38,9 @@ const GRCClientPage = () => {
       description:
         'Stay ahead of the complex and ever-changing regulatory landscape. We help you meet your compliance obligations, from data privacy laws like GDPR to industry-specific standards.',
       features: [
-        { icon: <FileText className="w-6 h-6 text-white" />, text: 'Compliance Program Development' },
-        { icon: <ShieldCheck className="w-6 h-6 text-white" />, text: 'Regulatory Gap Analysis' },
-        { icon: <CheckCircle className="w-6 h-6 text-white" />, text: 'Audit & Assurance Support' },
+        { icon: <Icon><ClipboardCheck /></Icon>, text: 'Compliance Program Development' },
+        { icon: <Icon><ShieldCheck /></Icon>, text: 'Regulatory Gap Analysis' },
+        { icon: <Icon><ClipboardList /></Icon>, text: 'Audit & Assurance Support' },
       ],
     },
   } as const;

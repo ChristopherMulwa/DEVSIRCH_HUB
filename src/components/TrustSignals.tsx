@@ -1,4 +1,5 @@
-import { ShieldCheck, FileText, Lock, Handshake, Server, Network, Settings, Package, Code, LifeBuoy } from 'lucide-react';
+import { ShieldCheck, FileText, Lock, Handshake, Server, Network, Settings, Package, Code, LifeBuoy, AlertTriangle, ClipboardCheck, Landmark, ClipboardList, Bug, Search, Cloud, Wifi, HardDrive, ShoppingCart, BadgeCheck, Truck, Smartphone, CreditCard } from 'lucide-react';
+import Icon from '@/components/ui/Icon';
 
 type TrustSignalsProps = {
   className?: string;
@@ -15,40 +16,40 @@ export default function TrustSignals({ className, variant }: TrustSignalsProps) 
 
   const map: Record<NonNullable<TrustSignalsProps['variant']>, typeof base> = {
     grc: [
-      { icon: <FileText className="w-6 h-6" />, title: 'Framework-aligned', desc: 'ISO 27001, NIST CSF, SOC 2, PCI DSS, HIPAA, GDPR.' },
-      { icon: <ShieldCheck className="w-6 h-6" />, title: 'Audit-ready', desc: 'Evidence, policies, and controls mapped and maintained.' },
-      base[1],
-      base[2],
+      { icon: <Icon><Landmark /></Icon>, title: 'Governance-led', desc: 'Clear roles, policies, and oversight aligned to strategy.' },
+      { icon: <Icon><AlertTriangle /></Icon>, title: 'Risk-informed', desc: 'Identify, assess, prioritize, and treat enterprise risks.' },
+      { icon: <Icon><ClipboardCheck /></Icon>, title: 'Compliance-mapped', desc: 'ISO 27001, NIST CSF, SOC 2, PCI DSS, HIPAA, GDPR.' },
+      { icon: <Icon><ClipboardList /></Icon>, title: 'Audit-ready', desc: 'Evidence, policies, and controls organized and maintained.' },
     ],
     cybersecurity: [
-      { icon: <ShieldCheck className="w-6 h-6" />, title: 'Threat-led', desc: 'Pen testing, assessments, and incident readiness.' },
-      { icon: <Lock className="w-6 h-6" />, title: 'Hardening-first', desc: 'Secure configurations and prioritized remediation.' },
-      base[1],
-      base[2],
+      { icon: <Icon><Search /></Icon>, title: 'Threat-led', desc: 'Assessments and pen testing that emulate real adversaries.' },
+      { icon: <Icon><Bug /></Icon>, title: 'Vuln Management', desc: 'Identify, prioritize, and remediate systematically.' },
+      { icon: <Icon><Lock /></Icon>, title: 'Hardening-first', desc: 'Secure baselines and guardrails from day one.' },
+      { icon: <Icon><ShieldCheck /></Icon>, title: 'Response-ready', desc: 'Playbooks, detection, and rapid response.' },
     ],
     it: [
-      { icon: <Settings className="w-6 h-6" />, title: 'SLA-backed Support', desc: 'Responsive helpdesk and clear escalation paths.' },
-      { icon: <Server className="w-6 h-6" />, title: 'Smooth Migrations', desc: 'Planned cutovers, rollback plans, and documentation.' },
-      base[1],
-      base[3],
+      { icon: <Icon><Settings /></Icon>, title: 'SLA-backed Support', desc: 'Responsive helpdesk with clear escalation paths.' },
+      { icon: <Icon><Cloud /></Icon>, title: 'Cloud Strategy', desc: 'Right-fit cloud adoption and ongoing optimization.' },
+      { icon: <Icon><Server /></Icon>, title: 'Smooth Migrations', desc: 'Planned cutovers, rollback plans, and documentation.' },
+      { icon: <Icon><FileText /></Icon>, title: 'Governance & Policy', desc: 'Change, incident, and asset management that works.' },
     ],
     infrastructure: [
-      { icon: <Network className="w-6 h-6" />, title: 'Secure Network Design', desc: 'Segmentation, zero trust principles, and HA patterns.' },
-      { icon: <Server className="w-6 h-6" />, title: 'Scalable Architecture', desc: 'Right-sized capacity and growth-ready designs.' },
-      base[1],
-      base[3],
+      { icon: <Icon><Network /></Icon>, title: 'Secure Networks', desc: 'Segmentation, zero trust principles, and HA patterns.' },
+      { icon: <Icon><Server /></Icon>, title: 'Scalable Architecture', desc: 'Right-sized capacity and growth-ready designs.' },
+      { icon: <Icon><Wifi /></Icon>, title: 'Wireless Done Right', desc: 'Coverage, capacity, and security aligned to needs.' },
+      { icon: <Icon><HardDrive /></Icon>, title: 'Resilient Storage', desc: 'Backups, replication, and recovery objectives.' },
     ],
     procurement: [
-      { icon: <Package className="w-6 h-6" />, title: 'Authorized Vendors', desc: 'Multi-vendor quotes and transparent comparisons.' },
-      { icon: <ShieldCheck className="w-6 h-6" />, title: 'Warranty Managed', desc: 'Warranty registration, RMA coordination, support.' },
-      base[3],
-      base[1],
+      { icon: <Icon><Package /></Icon>, title: 'Authorized Vendors', desc: 'Multi-vendor quotes and transparent comparisons.' },
+      { icon: <Icon><ShoppingCart /></Icon>, title: 'End-to-end Logistics', desc: 'Sourcing, delivery, and installation covered.' },
+      { icon: <Icon><BadgeCheck /></Icon>, title: 'Warranty Managed', desc: 'Warranty registration, RMA coordination, support.' },
+      { icon: <Icon><Truck /></Icon>, title: 'On-time Delivery', desc: 'Coordinated timelines and clear communication.' },
     ],
     development: [
-      { icon: <Code className="w-6 h-6" />, title: 'Secure Coding', desc: 'Modern standards, code review, and dependency hygiene.' },
-      { icon: <LifeBuoy className="w-6 h-6" />, title: 'Post-launch Support', desc: 'Monitoring, SLAs, and continuous improvements.' },
-      base[2],
-      base[3],
+      { icon: <Icon><Code /></Icon>, title: 'Secure Coding', desc: 'Modern standards, code review, and dependency hygiene.' },
+      { icon: <Icon><Smartphone /></Icon>, title: 'Mobile & Web', desc: 'Responsive UX and performance across devices.' },
+      { icon: <Icon><CreditCard /></Icon>, title: 'Commerce-ready', desc: 'Payments, catalogs, and integrations you can trust.' },
+      { icon: <Icon><LifeBuoy /></Icon>, title: 'Post-launch Support', desc: 'Monitoring, SLAs, and continuous improvements.' },
     ],
   };
 
