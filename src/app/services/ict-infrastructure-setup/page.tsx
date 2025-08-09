@@ -6,6 +6,7 @@ import Link from 'next/link';
 import TrustSignals from '@/components/TrustSignals';
 import StickyCTA from '@/components/StickyCTA';
 import FAQSection from '@/components/FAQSection';
+import Reveal from '@/components/ui/Reveal';
 
 export const metadata: Metadata = {
   title: 'ICT Infrastructure Setup | DEVSIRCH HUB',
@@ -98,50 +99,66 @@ const InfrastructurePage = () => {
         <div className="container mx-auto px-4">
           {/* Service Overview */}
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-6">Reliable & Scalable Infrastructure</h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
-              A robust ICT infrastructure is the backbone of any modern business. DEVSIRCH HUB provides end-to-end infrastructure solutions, from design and implementation to management and support. We ensure your technology foundation is secure, scalable, and aligned with your business objectives.
-            </p>
+            <Reveal>
+              <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-6">Reliable & Scalable Infrastructure</h2>
+            </Reveal>
+            <Reveal delay={0.1}>
+              <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+                A robust ICT infrastructure is the backbone of any modern business. DEVSIRCH HUB provides end-to-end infrastructure solutions, from design and implementation to management and support. We ensure your technology foundation is secure, scalable, and aligned with your business objectives.
+              </p>
+            </Reveal>
           </div>
 
           {/* Key Offerings */}
           <div className="mt-20">
             <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-12">Our Infrastructure Services</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              {offerings.map((offering) => (
-                <div key={offering.title} className="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 flex items-start">
-                  <div className="flex-shrink-0 mr-6">{offering.icon}</div>
-                  <div>
-                    <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-3">{offering.title}</h3>
-                    <p className="text-gray-600 dark:text-gray-300">{offering.description}</p>
+              {offerings.map((offering, idx) => (
+                <Reveal key={offering.title} delay={0.05 * idx}>
+                  <div className="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 flex items-start">
+                    <div className="flex-shrink-0 mr-6">{offering.icon}</div>
+                    <div>
+                      <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-3">{offering.title}</h3>
+                      <p className="text-gray-600 dark:text-gray-300">{offering.description}</p>
+                    </div>
                   </div>
-                </div>
+                </Reveal>
               ))}
             </div>
           </div>
 
           {/* Benefits Section */}
-          <div className="mt-20 bg-gray-100 dark:bg-gray-800 p-12 rounded-lg">
-            <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-10">Key Benefits of Our Infrastructure Services</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 max-w-4xl mx-auto">
-              {benefits.map((benefit) => (
-                <div key={benefit} className="flex items-start">
-                  <CheckCircle className="w-6 h-6 text-green-500 mr-3 flex-shrink-0 mt-1" />
-                  <p className="text-gray-700 dark:text-gray-200">{benefit}</p>
-                </div>
-              ))}
+            <div className="mt-20 bg-gray-100 dark:bg-gray-800 p-12 rounded-lg">
+              <Reveal>
+                <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-10">Key Benefits of Our Infrastructure Services</h2>
+              </Reveal>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 max-w-4xl mx-auto">
+                {benefits.map((benefit, idx) => (
+                  <Reveal key={benefit} delay={0.05 * idx}>
+                    <div className="flex items-start">
+                      <CheckCircle className="w-6 h-6 text-green-500 mr-3 flex-shrink-0 mt-1" />
+                      <p className="text-gray-700 dark:text-gray-200">{benefit}</p>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
             </div>
-          </div>
 
           {/* CTA Section */}
           <div className="mt-20 text-center">
-            <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-6">Ready to Build a Better Infrastructure?</h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
-              Contact us today to discuss your infrastructure needs and learn how we can help you build a foundation for success.
-            </p>
-            <Link href="/contact" className="bg-blue-600 text-white font-bold py-4 px-8 rounded-full hover:bg-blue-700 transition-all duration-300 shadow-lg text-lg">
-              Request an Assessment
-            </Link>
+            <Reveal>
+              <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-6">Ready to Build a Better Infrastructure?</h2>
+            </Reveal>
+            <Reveal delay={0.1}>
+              <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
+                Contact us today to discuss your infrastructure needs and learn how we can help you build a foundation for success.
+              </p>
+            </Reveal>
+            <Reveal delay={0.2}>
+              <Link href="/contact" className="bg-blue-600 text-white font-bold py-4 px-8 rounded-full hover:bg-blue-700 transition-all duration-300 shadow-lg text-lg">
+                Request an Assessment
+              </Link>
+            </Reveal>
           </div>
           <FAQSection
             title="Infrastructure FAQs"

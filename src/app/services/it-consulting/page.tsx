@@ -6,6 +6,7 @@ import Link from 'next/link';
 import TrustSignals from '@/components/TrustSignals';
 import StickyCTA from '@/components/StickyCTA';
 import FAQSection from '@/components/FAQSection';
+import Reveal from '@/components/ui/Reveal';
 
 export const metadata: Metadata = {
   title: 'IT Consulting & Technical Support | DEVSIRCH HUB',
@@ -98,50 +99,66 @@ const ITConsultingPage = () => {
         <div className="container mx-auto px-4">
           {/* Service Overview */}
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-6">Optimize Your Technology</h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
-              Effective technology management is key to business success. DEVSIRCH HUB offers expert IT consulting and technical support to help you navigate the complexities of the digital landscape. We work with you to develop and implement IT strategies that enhance efficiency, reduce costs, and support your long-term goals.
-            </p>
+            <Reveal>
+              <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-6">Optimize Your Technology</h2>
+            </Reveal>
+            <Reveal delay={0.1}>
+              <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+                Effective technology management is key to business success. DEVSIRCH HUB offers expert IT consulting and technical support to help you navigate the complexities of the digital landscape. We work with you to develop and implement IT strategies that enhance efficiency, reduce costs, and support your long-term goals.
+              </p>
+            </Reveal>
           </div>
 
           {/* Key Offerings */}
           <div className="mt-20">
             <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-12">Our Core Consulting & Support Services</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              {offerings.map((offering) => (
-                <div key={offering.title} className="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 flex items-start">
-                  <div className="flex-shrink-0 mr-6">{offering.icon}</div>
-                  <div>
-                    <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-3">{offering.title}</h3>
-                    <p className="text-gray-600 dark:text-gray-300">{offering.description}</p>
+              {offerings.map((offering, idx) => (
+                <Reveal key={offering.title} delay={0.05 * idx}>
+                  <div className="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 flex items-start">
+                    <div className="flex-shrink-0 mr-6">{offering.icon}</div>
+                    <div>
+                      <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-3">{offering.title}</h3>
+                      <p className="text-gray-600 dark:text-gray-300">{offering.description}</p>
+                    </div>
                   </div>
-                </div>
+                </Reveal>
               ))}
             </div>
           </div>
 
           {/* Benefits Section */}
-          <div className="mt-20 bg-gray-100 dark:bg-gray-800 p-12 rounded-lg">
-            <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-10">Key Benefits of Partnering With Us</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 max-w-4xl mx-auto">
-              {benefits.map((benefit) => (
-                <div key={benefit} className="flex items-start">
-                  <CheckCircle className="w-6 h-6 text-green-500 mr-3 flex-shrink-0 mt-1" />
-                  <p className="text-gray-700 dark:text-gray-200">{benefit}</p>
-                </div>
-              ))}
+            <div className="mt-20 bg-gray-100 dark:bg-gray-800 p-12 rounded-lg">
+              <Reveal>
+                <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-10">Key Benefits of Partnering With Us</h2>
+              </Reveal>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 max-w-4xl mx-auto">
+                {benefits.map((benefit, idx) => (
+                  <Reveal key={benefit} delay={0.05 * idx}>
+                    <div className="flex items-start">
+                      <CheckCircle className="w-6 h-6 text-green-500 mr-3 flex-shrink-0 mt-1" />
+                      <p className="text-gray-700 dark:text-gray-200">{benefit}</p>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
             </div>
-          </div>
 
           {/* CTA Section */}
           <div className="mt-20 text-center">
-            <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-6">Ready to Elevate Your IT Strategy?</h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
-              Let us handle the technology so you can focus on what you do best. Contact us today for a consultation.
-            </p>
-            <Link href="/contact" className="bg-blue-600 text-white font-bold py-4 px-8 rounded-full hover:bg-blue-700 transition-all duration-300 shadow-lg text-lg">
-              Get in Touch
-            </Link>
+            <Reveal>
+              <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-6">Ready to Elevate Your IT Strategy?</h2>
+            </Reveal>
+            <Reveal delay={0.1}>
+              <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
+                Let us handle the technology so you can focus on what you do best. Contact us today for a consultation.
+              </p>
+            </Reveal>
+            <Reveal delay={0.2}>
+              <Link href="/contact" className="bg-blue-600 text-white font-bold py-4 px-8 rounded-full hover:bg-blue-700 transition-all duration-300 shadow-lg text-lg">
+                Get in Touch
+              </Link>
+            </Reveal>
           </div>
           <FAQSection
             title="IT Consulting FAQs"

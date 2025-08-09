@@ -4,6 +4,7 @@ import CybersecurityClientPage from './cybersecurity-client';
 import TrustSignals from '@/components/TrustSignals';
 import StickyCTA from '@/components/StickyCTA';
 import FAQSection from '@/components/FAQSection';
+import Reveal from '@/components/ui/Reveal';
 
 export const metadata: Metadata = {
   title: 'Cybersecurity Services | DEVSIRCH HUB',
@@ -53,7 +54,9 @@ const CybersecurityPage = () => {
       />
 
       <TrustSignals className="bg-gray-900/30" variant="cybersecurity" />
-      <CybersecurityClientPage />
+      <Reveal>
+        <CybersecurityClientPage />
+      </Reveal>
       <FAQSection
         title="Cybersecurity FAQs"
         items={[
