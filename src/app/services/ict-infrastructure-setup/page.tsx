@@ -3,6 +3,9 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import { CheckCircle, Network, Server, Wifi } from 'lucide-react';
 import Link from 'next/link';
+import LogoStrip from '@/components/LogoStrip';
+import StickyCTA from '@/components/StickyCTA';
+import FAQSection from '@/components/FAQSection';
 
 export const metadata: Metadata = {
   title: 'ICT Infrastructure Setup | DEVSIRCH HUB',
@@ -44,6 +47,36 @@ const InfrastructurePage = () => {
 
   return (
     <div className="bg-white dark:bg-gray-900">
+      {/* Breadcrumb JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Services', item: '/services' },
+              { '@type': 'ListItem', position: 2, name: 'ICT Infrastructure Setup', item: '/services/ict-infrastructure-setup' },
+            ],
+          }),
+        }}
+      />
+      {/* Service JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Service',
+            name: 'ICT Infrastructure Setup',
+            provider: { '@type': 'Organization', name: 'DEVSIRCH HUB' },
+            serviceType: 'Network, Server & Wireless Infrastructure',
+            areaServed: 'KE',
+          }),
+        }}
+      />
+
+      <LogoStrip className="bg-gray-100 dark:bg-gray-800/40" />
       {/* Hero Section */}
       <section className="relative h-[60vh] flex items-center justify-center text-white">
         <Image 
@@ -110,8 +143,17 @@ const InfrastructurePage = () => {
               Request an Assessment
             </Link>
           </div>
+          <FAQSection
+            title="Infrastructure FAQs"
+            items={[
+              { question: 'Do you support on-prem and cloud?', answer: 'Yes. We design hybrid architectures across on-prem, private and public cloud.' },
+              { question: 'Can you work after-hours to minimize downtime?', answer: 'We schedule maintenance windows and phased cutovers to reduce impact.' },
+              { question: 'Do you provide documentation and training?', answer: 'We deliver runbooks, network diagrams, and handover sessions as standard.' },
+            ]}
+          />
         </div>
       </section>
+      <StickyCTA href="/contact" label="Plan My Infrastructure" />
     </div>
   );
 };

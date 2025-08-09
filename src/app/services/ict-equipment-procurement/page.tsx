@@ -3,6 +3,9 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import { CheckCircle, ShoppingCart, Laptop, HardDrive } from 'lucide-react';
 import Link from 'next/link';
+import LogoStrip from '@/components/LogoStrip';
+import StickyCTA from '@/components/StickyCTA';
+import FAQSection from '@/components/FAQSection';
 
 export const metadata: Metadata = {
   title: 'ICT Equipment Procurement | DEVSIRCH HUB',
@@ -44,6 +47,36 @@ const ProcurementPage = () => {
 
   return (
     <div className="bg-white dark:bg-gray-900">
+      {/* Breadcrumb JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Services', item: '/services' },
+              { '@type': 'ListItem', position: 2, name: 'ICT Equipment Procurement', item: '/services/ict-equipment-procurement' },
+            ],
+          }),
+        }}
+      />
+      {/* Service JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Service',
+            name: 'ICT Equipment Procurement',
+            provider: { '@type': 'Organization', name: 'DEVSIRCH HUB' },
+            serviceType: 'Hardware, Software & Peripherals Sourcing',
+            areaServed: 'KE',
+          }),
+        }}
+      />
+
+      <LogoStrip className="bg-gray-100 dark:bg-gray-800/40" />
       {/* Hero Section */}
       <section className="relative h-[60vh] flex items-center justify-center text-white">
         <Image 
@@ -110,8 +143,17 @@ const ProcurementPage = () => {
               Request a Quote
             </Link>
           </div>
+          <FAQSection
+            title="Procurement FAQs"
+            items={[
+              { question: 'Do you provide vendor comparisons?', answer: 'Yes, we provide multi-vendor quotes and recommendations aligned to requirements.' },
+              { question: 'Can you handle delivery and installation?', answer: 'We offer end-to-end logistics plus onsite installation and configuration.' },
+              { question: 'What about warranties and support?', answer: 'We register warranties and can coordinate RMA and vendor support on your behalf.' },
+            ]}
+          />
         </div>
       </section>
+      <StickyCTA href="/contact" label="Get a Procurement Quote" />
     </div>
   );
 };

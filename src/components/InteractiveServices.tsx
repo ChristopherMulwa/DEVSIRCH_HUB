@@ -7,7 +7,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 
-const services = [
+type Service = {
+  title: string;
+  description: string;
+  href: string;
+  icon: React.ReactNode;
+  image: string;
+};
+
+const services: Service[] = [
   {
     title: 'Cybersecurity Awareness',
     description: 'Expert training and assessments to protect your organization from cyber threats.',
@@ -53,7 +61,7 @@ const services = [
 ];
 
 const InteractiveServices = () => {
-  const [activeService, setActiveService] = useState(services[0]);
+  const [activeService, setActiveService] = useState<Service | null>(services[0]);
 
   return (
     <section className="py-20 bg-gray-50">
@@ -93,6 +101,7 @@ const InteractiveServices = () => {
           {/* Right Column: Service Content */}
           <div className="w-2/3">
             <AnimatePresence mode="wait">
+              {activeService && (
               <motion.div
                 key={activeService.title}
                 initial={{ opacity: 0, y: 20 }}
@@ -115,6 +124,7 @@ const InteractiveServices = () => {
                   Learn More <ArrowRight className="ml-2 w-5 h-5" />
                 </Link>
               </motion.div>
+              )}
             </AnimatePresence>
           </div>
         </div>

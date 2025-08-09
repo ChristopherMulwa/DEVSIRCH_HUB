@@ -3,6 +3,9 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import { CheckCircle, Briefcase, Settings, Phone } from 'lucide-react';
 import Link from 'next/link';
+import LogoStrip from '@/components/LogoStrip';
+import StickyCTA from '@/components/StickyCTA';
+import FAQSection from '@/components/FAQSection';
 
 export const metadata: Metadata = {
   title: 'IT Consulting & Technical Support | DEVSIRCH HUB',
@@ -44,6 +47,36 @@ const ITConsultingPage = () => {
 
   return (
     <div className="bg-white dark:bg-gray-900">
+      {/* Breadcrumb JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Services', item: '/services' },
+              { '@type': 'ListItem', position: 2, name: 'IT Consulting & Support', item: '/services/it-consulting' },
+            ],
+          }),
+        }}
+      />
+      {/* Service JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Service',
+            name: 'IT Consulting & Support',
+            provider: { '@type': 'Organization', name: 'DEVSIRCH HUB' },
+            serviceType: 'IT Strategy, Optimization & Helpdesk',
+            areaServed: 'KE',
+          }),
+        }}
+      />
+
+      <LogoStrip className="bg-gray-100 dark:bg-gray-800/40" />
       {/* Hero Section */}
       <section className="relative h-[60vh] flex items-center justify-center text-white">
         <Image 
@@ -110,8 +143,17 @@ const ITConsultingPage = () => {
               Get in Touch
             </Link>
           </div>
+          <FAQSection
+            title="IT Consulting FAQs"
+            items={[
+              { question: 'Do you work with existing IT teams?', answer: 'Yes, we augment internal teams or provide end-to-end services depending on your needs.' },
+              { question: 'What engagement models do you offer?', answer: 'Project-based, retainer, and fully managed support options are available.' },
+              { question: 'Can you help with cloud migrations?', answer: 'Absolutely. We plan and execute migrations with minimal downtime and clear rollback plans.' },
+            ]}
+          />
         </div>
       </section>
+      <StickyCTA href="/contact" label="Talk to an IT Consultant" />
     </div>
   );
 };

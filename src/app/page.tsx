@@ -82,7 +82,7 @@ export default function Home() {
               <Code className="w-16 h-16 mx-auto text-blue-600 mb-6" />
               <h3 className="text-2xl font-bold text-gray-800 mb-4 text-center">Website & Software Development</h3>
               <p className="text-gray-600 text-center mb-6">We build custom websites and software solutions to meet your unique business needs.</p>
-              <Link href="/services/development" className="text-blue-600 font-semibold flex items-center justify-center group-hover:text-blue-800 transition-colors">
+              <Link href="/services/website-and-software-development" className="text-blue-600 font-semibold flex items-center justify-center group-hover:text-blue-800 transition-colors">
                 Read More <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </motion.div>
@@ -97,7 +97,7 @@ export default function Home() {
               <Network className="w-16 h-16 mx-auto text-blue-600 mb-6" />
               <h3 className="text-2xl font-bold text-gray-800 mb-4 text-center">ICT Infrastructure Setup</h3>
               <p className="text-gray-600 text-center mb-6">We design and implement robust and scalable ICT infrastructure for your organization.</p>
-              <Link href="/services/infrastructure" className="text-blue-600 font-semibold flex items-center justify-center group-hover:text-blue-800 transition-colors">
+              <Link href="/services/ict-infrastructure-setup" className="text-blue-600 font-semibold flex items-center justify-center group-hover:text-blue-800 transition-colors">
                 Read More <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </motion.div>
@@ -112,7 +112,7 @@ export default function Home() {
               <ShoppingCart className="w-16 h-16 mx-auto text-blue-600 mb-6" />
               <h3 className="text-2xl font-bold text-gray-800 mb-4 text-center">ICT Equipment Procurement</h3>
               <p className="text-gray-600 text-center mb-6">We procure and deliver a wide range of ICT equipment to meet your needs.</p>
-              <Link href="/services/procurement" className="text-blue-600 font-semibold flex items-center justify-center group-hover:text-blue-800 transition-colors">
+              <Link href="/services/ict-equipment-procurement" className="text-blue-600 font-semibold flex items-center justify-center group-hover:text-blue-800 transition-colors">
                 Read More <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </motion.div>

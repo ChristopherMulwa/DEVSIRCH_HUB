@@ -3,6 +3,9 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import { CheckCircle, Code, Smartphone, Server } from 'lucide-react';
 import Link from 'next/link';
+import LogoStrip from '@/components/LogoStrip';
+import StickyCTA from '@/components/StickyCTA';
+import FAQSection from '@/components/FAQSection';
 
 export const metadata: Metadata = {
   title: 'Website & Software Development | DEVSIRCH HUB',
@@ -44,6 +47,36 @@ const DevelopmentPage = () => {
 
   return (
     <div className="bg-white dark:bg-gray-900">
+      {/* Breadcrumb JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Services', item: '/services' },
+              { '@type': 'ListItem', position: 2, name: 'Website & Software Development', item: '/services/website-and-software-development' },
+            ],
+          }),
+        }}
+      />
+      {/* Service JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Service',
+            name: 'Website & Software Development',
+            provider: { '@type': 'Organization', name: 'DEVSIRCH HUB' },
+            serviceType: 'Web, Mobile & Enterprise Applications',
+            areaServed: 'KE',
+          }),
+        }}
+      />
+
+      <LogoStrip className="bg-gray-100 dark:bg-gray-800/40" />
       {/* Hero Section */}
       <section className="relative h-[60vh] flex items-center justify-center text-white">
         <Image 
@@ -110,8 +143,17 @@ const DevelopmentPage = () => {
               Start Your Project
             </Link>
           </div>
+          <FAQSection
+            title="Development FAQs"
+            items={[
+              { question: 'What is your typical project timeline?', answer: 'MVPs often take 4–8 weeks. Timelines vary by scope, integrations, and approvals.' },
+              { question: 'Do you provide maintenance?', answer: 'Yes, we offer support and maintenance SLAs after launch.' },
+              { question: 'What tech stacks do you use?', answer: 'We use modern stacks tailored to needs; for web, React/Next.js, Node, and cloud-native services.' },
+            ]}
+          />
         </div>
       </section>
+      <StickyCTA href="/contact" label="Start Your Project" />
     </div>
   );
 };
