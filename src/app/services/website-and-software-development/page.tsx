@@ -79,11 +79,12 @@ const DevelopmentPage = () => {
 
       <TrustSignals className="bg-gray-100 dark:bg-gray-800/40" variant="development" />
       {/* Hero Section */}
-      <section className="relative h-[60vh] flex items-center justify-center text-white">
+      <section className="relative h-[100dvh] flex items-center justify-center text-white">
         <Image 
           src="/Website&SoftwareDevelopmentImage.png" 
           alt="Code on a screen" 
           fill
+          sizes="100vw"
           className="object-cover"
           priority
         />

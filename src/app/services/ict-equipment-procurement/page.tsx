@@ -79,11 +79,12 @@ const ProcurementPage = () => {
 
       <TrustSignals className="bg-gray-100 dark:bg-gray-800/40" variant="procurement" />
       {/* Hero Section */}
-      <section className="relative h-[60vh] flex items-center justify-center text-white">
+      <section className="relative h-[100dvh] flex items-center justify-center text-white">
         <Image 
           src="/ICTEquipmentProcurementImage.png" 
           alt="A warehouse with boxes of equipment" 
           fill
+          sizes="100vw"
           className="object-cover"
           priority
         />
