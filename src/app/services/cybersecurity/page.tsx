@@ -1,7 +1,7 @@
 
 import type { Metadata } from 'next';
 import CybersecurityClientPage from './cybersecurity-client';
-import LogoStrip from '@/components/LogoStrip';
+import TrustSignals from '@/components/TrustSignals';
 import StickyCTA from '@/components/StickyCTA';
 import FAQSection from '@/components/FAQSection';
 
@@ -52,7 +52,7 @@ const CybersecurityPage = () => {
         }}
       />
 
-      <LogoStrip className="bg-gray-900/40" />
+      <TrustSignals className="bg-gray-900/30" />
       <CybersecurityClientPage />
       <FAQSection
         title="Cybersecurity FAQs"

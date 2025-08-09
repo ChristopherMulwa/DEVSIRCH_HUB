@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import { CheckCircle, ShoppingCart, Laptop, HardDrive } from 'lucide-react';
 import Link from 'next/link';
-import LogoStrip from '@/components/LogoStrip';
+import TrustSignals from '@/components/TrustSignals';
 import StickyCTA from '@/components/StickyCTA';
 import FAQSection from '@/components/FAQSection';
 
@@ -76,7 +76,7 @@ const ProcurementPage = () => {
         }}
       />
 
-      <LogoStrip className="bg-gray-100 dark:bg-gray-800/40" />
+      <TrustSignals className="bg-gray-100 dark:bg-gray-800/40" />
       {/* Hero Section */}
       <section className="relative h-[60vh] flex items-center justify-center text-white">
         <Image 

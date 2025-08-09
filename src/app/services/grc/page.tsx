@@ -1,7 +1,7 @@
 
 import type { Metadata } from 'next';
 import GRCClientPage from './grc-client';
-import LogoStrip from '@/components/LogoStrip';
+import TrustSignals from '@/components/TrustSignals';
 import StickyCTA from '@/components/StickyCTA';
 import FAQSection from '@/components/FAQSection';
 
@@ -53,7 +53,7 @@ export default function GRCPage() {
         }}
       />
 
-      <LogoStrip className="bg-gray-800/50" />
+      <TrustSignals className="bg-gray-50 dark:bg-gray-900/40" />
       <GRCClientPage />
 
       <FAQSection
