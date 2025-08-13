@@ -82,14 +82,14 @@ const InteractiveServices = () => {
                 key={service.title}
                 onClick={() => setActiveService(service)}
                 className={`p-6 rounded-lg cursor-pointer transition-all duration-300 ${
-                  activeService.title === service.title
+                  activeService && activeService.title === service.title
                     ? 'bg-blue-600 text-white shadow-lg'
                     : 'bg-white text-gray-700 hover:bg-gray-100 hover:shadow-md'
                 }`}
                 whileHover={{ scale: 1.03 }}
               >
                 <div className="flex items-center space-x-4">
-                  <div className={`transition-colors duration-300 ${activeService.title !== service.title && 'text-blue-600'}`}>
+                  <div className={`transition-colors duration-300 ${activeService && activeService.title !== service.title ? 'text-blue-600' : ''}`}>
                     {service.icon}
                   </div>
                   <h3 className="text-xl font-semibold">{service.title}</h3>
@@ -135,7 +135,7 @@ const InteractiveServices = () => {
             {services.map((service) => (
               <div key={service.title} className="border border-gray-200 rounded-lg overflow-hidden">
                 <motion.div
-                  onClick={() => setActiveService(activeService.title === service.title ? null : service)}
+                  onClick={() => setActiveService(activeService && activeService.title === service.title ? null : service)}
                   className="p-6 flex justify-between items-center cursor-pointer bg-white"
                 >
                   <div className="flex items-center space-x-4">
