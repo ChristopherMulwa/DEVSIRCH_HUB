@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePathname } from 'next/navigation';
@@ -80,9 +81,9 @@ const Header = () => {
   };
 
   const mobileMenuVariants = {
-    closed: { opacity: 0, x: "-100%", transition: { duration: 0.3, ease: 'easeInOut' } },
-    open: { opacity: 1, x: 0, transition: { duration: 0.4, ease: 'easeInOut' } }
-  };
+    closed: { opacity: 0, x: "-100%", transition: { duration: 0.3, ease: "easeInOut" } },
+    open: { opacity: 1, x: 0, transition: { duration: 0.4, ease: "easeInOut" } }
+  } as const;
 
   const mobileNavItemsVariants = {
     closed: { opacity: 0, y: -10 },
@@ -112,8 +113,10 @@ const Header = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <Link href="/" className="text-2xl font-bold">
-                DEVSIRCH HUB
+              <Link href="/" className="flex items-center">
+                <span className="text-2xl font-bold tracking-tight">
+                  DEVSIRCH <span className="text-blue-600">HUB</span>
+                </span>
               </Link>
             </motion.div>
 
@@ -201,8 +204,10 @@ const Header = () => {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex justify-between items-center p-4 border-b">
-                <Link href="/" className="text-xl font-bold text-gray-800">
-                  DEVSIRCH HUB
+                <Link href="/" className="flex items-center">
+                  <span className="text-xl font-bold tracking-tight text-gray-900">
+                    DEVSIRCH <span className="text-blue-600">HUB</span>
+                  </span>
                 </Link>
                 <button onClick={() => setIsOpen(false)} aria-label="Close menu">
                   <X size={28} className="text-gray-600" />
