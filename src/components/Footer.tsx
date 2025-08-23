@@ -6,11 +6,7 @@ import Link from 'next/link';
 import { Facebook, Twitter, Linkedin, Mail, Phone, MapPin } from 'lucide-react';
 
 const Footer = () => {
-  const [year, setYear] = useState(new Date().getFullYear());
-
-  useEffect(() => {
-    setYear(new Date().getFullYear());
-  }, []);
+  const year = new Date().getFullYear();
 
   return (
     <footer className="bg-gray-900 text-white">
@@ -60,15 +56,15 @@ const Footer = () => {
             <ul className="space-y-3 text-gray-400">
               <li className="flex items-start">
                 <MapPin size={20} className="mr-3 mt-1 flex-shrink-0" />
-                <span>123 Innovation Drive, Nairobi, Kenya</span>
+                <span>Nairobi, Kenya</span>
               </li>
               <li className="flex items-center">
                 <Phone size={20} className="mr-3 flex-shrink-0" />
-                <a href="tel:+254700000000" className="hover:text-white transition-colors">+254 700 000 000</a>
+                <a href="tel:+254759773145" className="hover:text-white transition-colors">+254 759 773 145</a>
               </li>
               <li className="flex items-center">
                 <Mail size={20} className="mr-3 flex-shrink-0" />
-                <a href="mailto:info@devsirchhub.co.ke" className="hover:text-white transition-colors">info@devsirchhub.co.ke</a>
+                <a href="mailto:devsirchhub@gmail.com" className="hover:text-white transition-colors">devsirchhub@gmail.com</a>
               </li>
             </ul>
           </div>

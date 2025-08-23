@@ -28,6 +28,9 @@ const contactSchema = z.object({
   phone: z.string().optional(),
   message: z.string().min(10, { message: "Message must be at least 10 characters." }),
   honeypot: z.string().optional(), // Honeypot field
+  consent: z.boolean().refine((val) => val === true, {
+    message: "You must agree to the Privacy Policy."
+  }), // Consent field
 });
 
 type ContactFormInputs = z.infer<typeof contactSchema>;
@@ -97,7 +100,32 @@ const ContactPage = () => {
 
   return (
     <>
-      <Toaster position="top-right" />
+      <Toaster 
+        position="top-right"
+        containerStyle={{
+          top: 64, // Adjust this value based on your header height
+          right: 16,
+        }}
+        toastOptions={{
+          duration: 5000,
+          style: {
+            background: '#ffffff',
+            color: '#1f2937',
+          },
+          success: {
+            iconTheme: {
+              primary: '#10B981',
+              secondary: '#ffffff',
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: '#EF4444',
+              secondary: '#ffffff',
+            },
+          },
+        }}
+      />
        {/* Hero Section */}
        <section className="relative h-screen flex items-center justify-center">
           <Image
@@ -245,11 +273,11 @@ const ContactPage = () => {
                 <ul className="space-y-6">
                     <motion.li className="flex items-center" whileHover={{ x: 5 }}>
                         <Mail className="w-6 h-6 mr-4" />
-                        <a href="mailto:info@devsirchhub.co.ke" className="hover:underline">info@devsirchhub.co.ke</a>
+                        <a href="mailto:devsirchhub@gmail.com" className="hover:underline">devsirchhub@gmail.com</a>
                     </motion.li>
                     <motion.li className="flex items-center" whileHover={{ x: 5 }}>
                         <Phone className="w-6 h-6 mr-4" />
-                        <a href="tel:+254728094959" className="hover:underline">+254 728 094 959</a>
+                        <a href="tel:+254759773145" className="hover:underline">+254 759 773 145</a>
                     </motion.li>
                     <motion.li className="flex items-start" whileHover={{ x: 5 }}>
                         <MapPin className="w-6 h-6 mr-4 mt-1" />
