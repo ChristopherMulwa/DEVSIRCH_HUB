@@ -1,5 +1,4 @@
 import ServicesPageClient from './ServicesPageClient';
-import type { Metadata } from 'next';
 
 const ServicesPage = () => {
   return (

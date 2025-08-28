@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
+
 import Link from 'next/link';
 import { Facebook, Twitter, Linkedin, Mail, Phone, MapPin } from 'lucide-react';
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { Landmark, ShieldCheck, BarChart, FileText, ArrowRight, CheckCircle, Users, TrendingUp, AlertTriangle, ClipboardCheck, ClipboardList } from 'lucide-react';
+import { Landmark, ShieldCheck, BarChart, FileText, ArrowRight, CheckCircle, TrendingUp, AlertTriangle, ClipboardCheck, ClipboardList } from 'lucide-react';
 import Icon from '@/components/ui/Icon';
 import Link from 'next/link';
 import Image from 'next/image';
