@@ -62,7 +62,7 @@ const InteractiveTimeline: React.FC<InteractiveTimelineProps> = ({ events }) => 
       {events.map((event, index) => (
         <div
           key={index}
-          ref={(el) => (itemsRef.current[index] = el)}
+          ref={(el) => {itemsRef.current[index] = el}}
           className={`mb-12 flex items-center w-full md:justify-between ${
             index % 2 === 0 ? 'md:flex-row-reverse' : ''
           }`}

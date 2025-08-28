@@ -23,7 +23,18 @@ const ValueCard: React.FC<ValueCardProps> = ({ icon, title, description, delay }
         {/* Front of the card */}
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-white to-gray-100 dark:from-gray-800 dark:to-gray-900 p-8 rounded-2xl shadow-lg [backface-visibility:hidden] border border-gray-200 dark:border-gray-700">
           <div className="text-blue-500 dark:text-blue-400 mb-4">
-            {React.cloneElement(icon as React.ReactElement, { className: "w-16 h-16" })}
+            {React.isValidElement(icon)
+              ? React.cloneElement(
+                  icon as React.ReactElement<{ className?: string }>,
+                  {
+                    ...((icon as React.ReactElement<{ className?: string }>).props || {}),
+                    className: [
+                      "w-16 h-16",
+                      ((icon as React.ReactElement<{ className?: string }>).props && (icon as React.ReactElement<{ className?: string }>).props.className) || ""
+                    ].filter(Boolean).join(" ")
+                  }
+                )
+              : icon}
           </div>
           <h3 className="text-2xl font-bold text-gray-800 dark:text-white text-center">{title}</h3>
         </div>

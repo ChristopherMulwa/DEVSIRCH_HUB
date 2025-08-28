@@ -25,9 +25,16 @@ const faqData = [
     question: "What are your future plans for tech training?",
     answer: "We are excited to be developing a range of professional tech training and online courses. These programs will cover in-demand skills in areas like cybersecurity, software development, and IT management, designed to empower the next generation of tech professionals in Kenya."
   }
-];
+] as const;
 
-const AccordionItem = ({ question, answer, isOpen, onClick }) => {
+type AccordionItemProps = {
+  question: string;
+  answer: string;
+  isOpen: boolean;
+  onClick: () => void;
+};
+
+const AccordionItem = ({ question, answer, isOpen, onClick }: AccordionItemProps) => {
   return (
     <div className="border-b border-gray-200 dark:border-gray-700 last:border-b-0">
       <button
