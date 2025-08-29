@@ -3,11 +3,12 @@ import { Resend } from 'resend';
 import * as z from 'zod';
 
 // Check if API key is available
-if (!process.env.RESEND_API_KEY) {
-  console.warn('RESEND_API_KEY is not set. Email functionality will be disabled.');
+const apiKey = process.env.RESEND_API_KEY;
+if (!apiKey) {
+  console.warn('RESEND_API_KEY is not set. Contact form will not work in production.');
 }
 
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+const resend = apiKey ? new Resend(apiKey) : null;
 
 // Zod schema for validating the request body
 const contactSchema = z.object({
@@ -19,10 +20,10 @@ const contactSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    // Check if Resend is configured
+    // Check if Resend is properly configured
     if (!resend) {
       return NextResponse.json({ 
-        message: 'Email service is not configured. Please contact support.' 
+        message: 'Email service is not configured. Please set RESEND_API_KEY environment variable.' 
       }, { status: 503 });
     }
 
@@ -38,8 +39,8 @@ export async function POST(req: NextRequest) {
     const { name, email, phone, message } = parsed.data;
 
     const { data, error } = await resend.emails.send({
-      from: process.env.FROM_EMAIL || 'onboarding@resend.dev', // Use environment variable or fallback
-      to: process.env.TO_EMAIL || 'your-email@example.com', // Use environment variable or fallback
+      from: process.env.FROM_EMAIL || 'onboarding@resend.dev',
+      to: process.env.CONTACT_EMAIL || 'your-email@example.com',
       subject: `New Contact Form Submission from ${name}`,
       replyTo: email,
       html: `
