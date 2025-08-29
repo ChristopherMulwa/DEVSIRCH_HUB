@@ -78,8 +78,8 @@ const ContactPage = () => {
     console.log('Form abandoned:', { progress, timeSpent, fieldInteractions });
     
     // You can integrate with Google Analytics, Mixpanel, etc.
-    if (typeof window !== 'undefined' && (window as unknown as { gtag?: Function }).gtag) {
-      const gtag = (window as unknown as { gtag: Function }).gtag;
+    if (typeof window !== 'undefined' && (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag) {
+      const gtag = (window as unknown as { gtag: (...args: unknown[]) => void }).gtag;
       gtag('event', 'form_abandonment', {
         event_category: 'Contact Form',
         event_label: `Progress: ${progress}%`,
@@ -241,8 +241,8 @@ const ContactPage = () => {
     console.log('Form submitted successfully:', { timeToComplete, interactions });
     
     // Send to analytics service
-    if (typeof window !== 'undefined' && (window as unknown as { gtag?: Function }).gtag) {
-      const gtag = (window as unknown as { gtag: Function }).gtag;
+    if (typeof window !== 'undefined' && (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag) {
+      const gtag = (window as unknown as { gtag: (...args: unknown[]) => void }).gtag;
       gtag('event', 'form_submission', {
         event_category: 'Contact Form',
         event_label: 'Success',
