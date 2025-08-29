@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm, SubmitHandler, UseFormRegister } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Toaster, toast } from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Phone, MapPin, Loader2, Send, Shield, Clock, Users } from 'lucide-react';
 import dynamic from 'next/dynamic';
@@ -54,12 +54,11 @@ const contactSchema = z.object({
       message: "Message contains potentially harmful content."
     })
     .transform(val => val.trim()),
-  phone: z.string()
-    .optional()
+  phone: z.optional(z.string()
     .transform(val => val?.trim())
     .refine(val => !val || /^[\+\-\s\(\)\d]{7,20}$/.test(val), {
       message: "Invalid phone number format."
-    }),
+    })),
   honeypot: z.string().optional(),
   consent: z.boolean().refine((val) => val === true, {
     message: "You must agree to the Privacy Policy."
@@ -69,6 +68,21 @@ const contactSchema = z.object({
 type ContactFormInputs = z.infer<typeof contactSchema>;
 
 // Memoized form field component for better performance
+interface FormFieldProps {
+  id: string;
+  type: string;
+  register: UseFormRegister<ContactFormInputs>;
+  error?: string;
+  touched?: boolean;
+  onBlur: () => void;
+  hint: string;
+  label: string;
+  required?: boolean;
+  className?: string;
+  placeholder?: string;
+  rows?: number;
+}
+
 const FormField = React.memo(({ 
   id, 
   type, 
@@ -81,19 +95,7 @@ const FormField = React.memo(({
   required = false,
   className = "",
   ...props 
-}: {
-  id: string;
-  type: string;
-  register: any;
-  error?: string;
-  touched?: boolean;
-  onBlur: () => void;
-  hint: string;
-  label: string;
-  required?: boolean;
-  className?: string;
-  [key: string]: any;
-}) => (
+}: FormFieldProps) => (
   <div className="relative">
     <input
       id={id}
@@ -168,7 +170,6 @@ const ContactPage = React.memo(() => {
   const [fieldInteractions, setFieldInteractions] = useState<Record<string, number>>({});
   
   // Advanced accessibility features
-  const [focusedField, setFocusedField] = useState<string | null>(null);
   const [announcements, setAnnouncements] = useState<string[]>([]);
   const formRef = useRef<HTMLFormElement>(null);
   const submitButtonRef = useRef<HTMLButtonElement>(null);
@@ -391,7 +392,7 @@ const ContactPage = React.memo(() => {
       
       throw err;
     }
-  }, [lastSubmissionTime]);
+  }, [lastSubmissionTime, csrfToken, sessionId, formStartTime, fieldInteractions, suspiciousActivity]);
 
   const onSubmit: SubmitHandler<ContactFormInputs> = async (data) => {
     // Security checks
@@ -671,13 +672,11 @@ const ContactPage = React.memo(() => {
 
   // Focus management for better accessibility
   const handleFieldFocus = useCallback((fieldName: string) => {
-    setFocusedField(fieldName);
-  }, []);
+    trackFieldInteraction(fieldName);
+  }, [trackFieldInteraction]);
 
   const handleFieldBlurEnhanced = useCallback(async (fieldName: keyof ContactFormInputs) => {
     await trigger(fieldName);
-    trackFieldInteraction(fieldName);
-    setFocusedField(null);
     
     // Announce validation result to screen readers
     if (errors[fieldName]) {
@@ -685,7 +684,7 @@ const ContactPage = React.memo(() => {
     } else if (touchedFields[fieldName] && watchedFields[fieldName]) {
       announceToScreenReader(`${fieldName} field is valid`);
     }
-  }, [trigger, trackFieldInteraction, errors, touchedFields, watchedFields, announceToScreenReader, getFieldError]);
+  }, [trigger, errors, touchedFields, watchedFields, announceToScreenReader, getFieldError]);
 
   // Enhanced keyboard navigation
   const handleFormKeyDown = useCallback((e: React.KeyboardEvent) => {
@@ -710,15 +709,7 @@ const ContactPage = React.memo(() => {
     }
   }, [formProgress, announceToScreenReader]);
 
-  // Enhanced field validation with accessibility feedback
-  const getFieldErrorWithA11y = useCallback((fieldName: keyof ContactFormInputs) => {
-    const error = getFieldError(fieldName);
-    if (error && focusedField !== fieldName) {
-      // Only announce error if field is not currently focused (to avoid spam)
-      return error;
-    }
-    return error;
-  }, [getFieldError, focusedField]);
+
 
   // Enhanced animation variants
   const containerVariants = {
@@ -740,25 +731,14 @@ const ContactPage = React.memo(() => {
       scale: 1,
       transition: {
         duration: 0.5,
-        type: "spring",
+        type: "spring" as const,
         stiffness: 100,
         damping: 15,
       },
     },
   };
 
-  const fieldVariants = {
-    focus: {
-      scale: 1.02,
-      boxShadow: "0 4px 12px rgba(37, 99, 235, 0.15)",
-      transition: { duration: 0.2 }
-    },
-    blur: {
-      scale: 1,
-      boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-      transition: { duration: 0.2 }
-    }
-  };
+
 
   const progressVariants = {
     initial: { width: 0, opacity: 0 },
@@ -766,7 +746,7 @@ const ContactPage = React.memo(() => {
       width: `${progress}%`,
       opacity: 1,
       transition: {
-        width: { duration: 0.8, ease: "easeOut" },
+        width: { duration: 0.8, ease: [0.4, 0, 0.2, 1] as [number, number, number, number] },
         opacity: { duration: 0.3 }
       }
     })
@@ -782,7 +762,11 @@ const ContactPage = React.memo(() => {
   const floatVariants = {
     float: {
       y: [-2, 2, -2],
-      transition: { duration: 3, repeat: Infinity, ease: "easeInOut" }
+      transition: { 
+        duration: 3, 
+        repeat: Infinity, 
+        ease: [0.4, 0, 0.6, 1] as [number, number, number, number]
+      }
     }
   };
 
@@ -1143,7 +1127,8 @@ const ContactPage = React.memo(() => {
                         id="name"
                         type="text"
                         {...register('name')}
-                        onBlur={() => handleFieldBlur('name')}
+                        onFocus={() => handleFieldFocus('name')}
+                        onBlur={() => handleFieldBlurEnhanced('name')}
                         className={`peer w-full px-3 sm:px-4 py-3 sm:py-4 bg-gray-50 rounded-xl text-gray-800 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all duration-200 text-sm sm:text-base ${errors.name ? 'focus:ring-red-500 border-red-200 bg-red-50' : touchedFields.name && !errors.name ? 'border-green-200 bg-green-50' : 'border border-gray-200'}`}
                         placeholder="Full Name"
                         aria-label="Full Name"
@@ -1198,7 +1183,8 @@ const ContactPage = React.memo(() => {
                         id="email"
                         type="email"
                         {...register('email')}
-                        onBlur={() => handleFieldBlur('email')}
+                        onFocus={() => handleFieldFocus('email')}
+                        onBlur={() => handleFieldBlurEnhanced('email')}
                         className={`peer w-full px-3 sm:px-4 py-3 sm:py-4 bg-gray-50 rounded-xl text-gray-800 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all duration-200 text-sm sm:text-base ${errors.email ? 'focus:ring-red-500 border-red-200 bg-red-50' : touchedFields.email && !errors.email ? 'border-green-200 bg-green-50' : 'border border-gray-200'}`}
                         placeholder="Email Address"
                         aria-label="Email Address"
@@ -1281,7 +1267,8 @@ const ContactPage = React.memo(() => {
                       <textarea
                         id="message"
                         {...register('message')}
-                        onBlur={() => handleFieldBlur('message')}
+                        onFocus={() => handleFieldFocus('message')}
+                        onBlur={() => handleFieldBlurEnhanced('message')}
                         onKeyDown={handleSuggestionKeyDown}
                         onChange={(e) => {
                           generateSuggestions(e.target.value);
