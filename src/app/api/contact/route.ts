@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as z from 'zod';
-import { resend, checkEmailService } from '@/lib/resend';
 
 // Zod schema for validating the request body
 const contactSchema = z.object({
@@ -12,13 +11,6 @@ const contactSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    // Check if Resend is configured
-    if (!checkEmailService()) {
-      return NextResponse.json({ 
-        message: 'Email service is not configured. Please contact support.' 
-      }, { status: 503 });
-    }
-
     const body = await req.json();
 
     // Validate the request body against the schema
@@ -30,32 +22,13 @@ export async function POST(req: NextRequest) {
 
     const { name, email, phone, message } = parsed.data;
 
-    const { data, error } = await resend.emails.send({
-      from: process.env.FROM_EMAIL || 'onboarding@resend.dev', // Use environment variable or fallback
-      to: process.env.TO_EMAIL || 'your-email@example.com', // Use environment variable or fallback
-      subject: `New Contact Form Submission from ${name}`,
-      replyTo: email,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #2563eb;">New Contact Form Submission</h2>
-          <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <p><strong>Name:</strong> ${name}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            ${phone ? `<p><strong>Phone:</strong> ${phone}</p>` : ''}
-            <p><strong>Message:</strong></p>
-            <p style="background: white; padding: 15px; border-radius: 4px; border-left: 4px solid #2563eb;">${message}</p>
-          </div>
-          <p style="color: #64748b; font-size: 14px;">This message was sent from the DEVSIRCH HUB contact form.</p>
-        </div>
-      `,
-    });
+    // TEMPORARILY DISABLED: Email functionality
+    // TODO: Re-enable when Resend build issue is resolved
+    console.log('Contact form submission:', { name, email, phone, message });
 
-    if (error) {
-      console.error('Resend API error:', error);
-      return NextResponse.json({ message: 'Error sending email', error }, { status: 500 });
-    }
-
-    return NextResponse.json({ message: 'Email sent successfully', data }, { status: 200 });
+    return NextResponse.json({ 
+      message: 'Contact form received successfully. Email service temporarily disabled for maintenance.' 
+    }, { status: 200 });
 
   } catch (error) {
     console.error('Server error:', error);
