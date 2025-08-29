@@ -1,12 +1,5 @@
+import { resend, checkEmailService } from '@/lib/resend';
 
-import { Resend } from 'resend';
-
-// Check if API key is available
-if (!process.env.RESEND_API_KEY) {
-  console.warn('RESEND_API_KEY is not set. Email functionality will be disabled.');
-}
-
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 const adminEmail = process.env.ADMIN_EMAIL;
 
 const createEmailHtml = (title: string, message: string, name: string | null) => `
@@ -24,7 +17,7 @@ const createEmailHtml = (title: string, message: string, name: string | null) =>
 
 export async function POST(req: Request) {
   // Check if Resend is configured
-  if (!resend) {
+  if (!checkEmailService()) {
     return new Response(JSON.stringify({ 
       error: 'Email service is not configured. Please contact support.' 
     }), { status: 503 });
