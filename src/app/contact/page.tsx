@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -66,7 +66,7 @@ const ContactPage = () => {
   }, [watchedFields, errors]);
 
   // Update progress when calculated
-  React.useEffect(() => {
+  useEffect(() => {
     setFormProgress(progress);
   }, [progress]);
 
@@ -74,7 +74,7 @@ const ContactPage = () => {
   const emailValue = watch('email');
   
   // Show phone field after email validation
-  React.useEffect(() => {
+  useEffect(() => {
     if (emailValue && emailValue.includes('@') && !showPhoneField) {
       setShowPhoneField(true);
     }
