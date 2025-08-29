@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -10,22 +10,56 @@ import { Mail, Phone, MapPin, Loader2, Send, Shield, Clock, Users } from 'lucide
 import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
 import Link from 'next/link';
+import Head from 'next/head';
 
-// Dynamically import the Map component to prevent SSR issues
+// Dynamically import components for better performance
 const Map = dynamic(
   () => import('@/components/ContactMap'),
   { 
     ssr: false,
-    loading: () => <div className="h-full w-full bg-gray-300 animate-pulse" aria-label="Loading map..." /> 
+    loading: () => (
+      <div className="h-full w-full bg-gray-300 animate-pulse rounded-xl flex items-center justify-center" aria-label="Loading map...">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full"
+        />
+      </div>
+    )
   }
 );
 
-// Optimized Zod schema for form validation - reduced to 3-4 fields
+// Lazy load toast notifications for better initial performance
+const LazyToaster = dynamic(
+  () => import('react-hot-toast').then((mod) => ({ default: mod.Toaster })),
+  { ssr: false }
+);
+
+// Enhanced Zod schema with security validations
 const contactSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  email: z.string().email({ message: "Please enter a valid email address." }),
-  message: z.string().min(10, { message: "Message must be at least 10 characters." }),
-  phone: z.string().optional(),
+  name: z.string()
+    .min(2, { message: "Name must be at least 2 characters." })
+    .max(100, { message: "Name must be less than 100 characters." })
+    .regex(/^[a-zA-Z\s\-'\.]+$/, { message: "Name contains invalid characters." })
+    .transform(val => val.trim()),
+  email: z.string()
+    .email({ message: "Please enter a valid email address." })
+    .max(254, { message: "Email address is too long." })
+    .toLowerCase()
+    .transform(val => val.trim()),
+  message: z.string()
+    .min(10, { message: "Message must be at least 10 characters." })
+    .max(2000, { message: "Message must be less than 2000 characters." })
+    .refine(val => !/<script|javascript:|data:|vbscript:/i.test(val), {
+      message: "Message contains potentially harmful content."
+    })
+    .transform(val => val.trim()),
+  phone: z.string()
+    .optional()
+    .transform(val => val?.trim())
+    .refine(val => !val || /^[\+\-\s\(\)\d]{7,20}$/.test(val), {
+      message: "Invalid phone number format."
+    }),
   honeypot: z.string().optional(),
   consent: z.boolean().refine((val) => val === true, {
     message: "You must agree to the Privacy Policy."
@@ -34,12 +68,157 @@ const contactSchema = z.object({
 
 type ContactFormInputs = z.infer<typeof contactSchema>;
 
-const ContactPage = () => {
+// Memoized form field component for better performance
+const FormField = React.memo(({ 
+  id, 
+  type, 
+  register, 
+  error, 
+  touched, 
+  onBlur, 
+  hint, 
+  label, 
+  required = false,
+  className = "",
+  ...props 
+}: {
+  id: string;
+  type: string;
+  register: any;
+  error?: string;
+  touched?: boolean;
+  onBlur: () => void;
+  hint: string;
+  label: string;
+  required?: boolean;
+  className?: string;
+  [key: string]: any;
+}) => (
+  <div className="relative">
+    <input
+      id={id}
+      type={type}
+      {...register}
+      onBlur={onBlur}
+      className={`peer w-full px-3 sm:px-4 py-3 sm:py-4 bg-gray-50 rounded-xl text-gray-800 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all duration-200 text-sm sm:text-base ${
+        error ? 'focus:ring-red-500 border-red-200 bg-red-50' : 
+        touched && !error ? 'border-green-200 bg-green-50' : 
+        'border border-gray-200'
+      } ${className}`}
+      aria-label={label}
+      aria-describedby={error ? `${id}-error` : undefined}
+      aria-invalid={!!error}
+      required={required}
+      {...props}
+    />
+    <label
+      htmlFor={id}
+      className={`absolute left-3 sm:left-4 -top-2 sm:-top-2.5 text-xs sm:text-sm font-medium transition-all peer-placeholder-shown:text-sm sm:peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3 sm:peer-placeholder-shown:top-4 peer-focus:-top-2 sm:peer-focus:-top-2.5 peer-focus:text-blue-600 peer-focus:text-xs sm:peer-focus:text-sm bg-white px-1 sm:px-2 ${
+        error ? 'text-red-600' : 
+        touched && !error ? 'text-green-600' : 
+        'text-gray-500'
+      }`}
+    >
+      {label} {required && '*'}
+    </label>
+    
+    {/* Field Hint */}
+    <p className="text-xs text-gray-500 mt-2 px-1">
+      💡 {hint}
+    </p>
+    
+    {error && (
+      <motion.p 
+        id={`${id}-error`}
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="text-red-500 text-xs sm:text-sm mt-2 flex items-center gap-2"
+        role="alert"
+        aria-live="polite"
+      >
+        <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+        </svg>
+        {error}
+      </motion.p>
+    )}
+    
+    {touched && !error && (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="absolute right-3 sm:right-4 top-3 sm:top-4 text-green-500"
+        aria-label={`${label} field is valid`}
+      >
+        <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+        </svg>
+      </motion.div>
+    )}
+  </div>
+));
+
+FormField.displayName = 'FormField';
+
+const ContactPage = React.memo(() => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPhoneField, setShowPhoneField] = useState(false);
   const [formProgress, setFormProgress] = useState(0);
   const [formStartTime, setFormStartTime] = useState<number | null>(null);
   const [fieldInteractions, setFieldInteractions] = useState<Record<string, number>>({});
+  
+  // Advanced accessibility features
+  const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [announcements, setAnnouncements] = useState<string[]>([]);
+  const formRef = useRef<HTMLFormElement>(null);
+  const submitButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Security features
+  const [csrfToken, setCsrfToken] = useState<string>('');
+  const [sessionId, setSessionId] = useState<string>('');
+  const [suspiciousActivity, setSuspiciousActivity] = useState(false);
+
+  // Generate CSRF token and session ID on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // Generate CSRF token
+      const token = btoa(Math.random().toString(36) + Date.now().toString(36));
+      setCsrfToken(token);
+      
+      // Generate session ID
+      const session = btoa(Math.random().toString(36) + navigator.userAgent.slice(0, 20));
+      setSessionId(session);
+      
+      // Store in sessionStorage for validation
+      sessionStorage.setItem('contact_csrf_token', token);
+      sessionStorage.setItem('contact_session_id', session);
+    }
+  }, []);
+
+  // Security monitoring
+  const monitorSuspiciousActivity = useCallback(() => {
+    // Monitor for suspicious patterns
+    const rapidSubmissions = fieldInteractions.submit && fieldInteractions.submit > 3;
+    const fastTyping = Object.values(fieldInteractions).some(count => count > 10);
+    const shortFormTime = formStartTime && Date.now() - formStartTime < 5000;
+    
+    if (rapidSubmissions || fastTyping || shortFormTime) {
+      setSuspiciousActivity(true);
+      console.warn('Suspicious activity detected');
+    }
+  }, [fieldInteractions, formStartTime]);
+
+  useEffect(() => {
+    monitorSuspiciousActivity();
+  }, [fieldInteractions, monitorSuspiciousActivity]);
+
+  // Input sanitization helper
+  const sanitizeInput = useCallback((input: string): string => {
+    return input
+      .replace(/[<>\"'&]/g, '') // Remove potentially harmful characters
+      .replace(/\s+/g, ' ') // Normalize whitespace
+      .trim();
+  }, []);
 
   const {
     register,
@@ -132,28 +311,131 @@ const ContactPage = () => {
     trackFieldInteraction(fieldName);
   }, [trigger, trackFieldInteraction]);
 
-  const onSubmit: SubmitHandler<ContactFormInputs> = async (data) => {
-    if (data.honeypot) {
-        console.log("Bot submission detected");
-        return;
-    }
+  // Enhanced API integration with retry and rate limiting
+  const [retryCount, setRetryCount] = useState(0);
+  const [lastSubmissionTime, setLastSubmissionTime] = useState<number | null>(null);
+  
+  const submitWithRetry = useCallback(async (data: ContactFormInputs, attempt = 1): Promise<boolean> => {
+    const maxRetries = 3;
+    const retryDelay = attempt * 1000; // Progressive delay
     
-    setIsSubmitting(true);
-    const toastId = toast.loading('Sending message...');
-
     try {
+      // Rate limiting check (prevent spam)
+      if (lastSubmissionTime && Date.now() - lastSubmissionTime < 30000) {
+        throw new Error('Please wait before submitting again');
+      }
+
+      // Add request timeout and enhanced headers
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-Client-Version': '1.0.0',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          ...data,
+          timestamp: Date.now(),
+          csrfToken,
+          sessionId,
+          clientInfo: {
+            userAgent: navigator.userAgent,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            language: navigator.language,
+            referrer: document.referrer,
+            screenResolution: `${screen.width}x${screen.height}`,
+          },
+          securityInfo: {
+            formStartTime,
+            fieldInteractions: Object.keys(fieldInteractions).length,
+            suspiciousActivity,
+          }
+        }),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
+      setLastSubmissionTime(Date.now());
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
+        
+        // Handle specific error cases
+        if (response.status === 429) {
+          throw new Error('Rate limit exceeded. Please wait before trying again.');
+        } else if (response.status >= 500 && attempt < maxRetries) {
+          // Server error - retry with exponential backoff
+          await new Promise(resolve => setTimeout(resolve, retryDelay));
+          return submitWithRetry(data, attempt + 1);
+        }
+        
         throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
       }
+
+      return true;
+    } catch (err) {
+      if (err instanceof Error && err.name === 'AbortError') {
+        throw new Error('Request timeout. Please check your connection and try again.');
+      }
+      
+      // Network error - retry with exponential backoff
+      if (attempt < maxRetries && (err instanceof Error && 
+          (err.message.includes('network') || err.message.includes('fetch') || err.message.includes('timeout')))) {
+        setRetryCount(attempt);
+        await new Promise(resolve => setTimeout(resolve, retryDelay));
+        return submitWithRetry(data, attempt + 1);
+      }
+      
+      throw err;
+    }
+  }, [lastSubmissionTime]);
+
+  const onSubmit: SubmitHandler<ContactFormInputs> = async (data) => {
+    // Security checks
+    if (data.honeypot) {
+        console.log("Bot submission detected");
+        return;
+    }
+
+    // Validate CSRF token
+    if (typeof window !== 'undefined') {
+      const storedToken = sessionStorage.getItem('contact_csrf_token');
+      if (!storedToken || storedToken !== csrfToken) {
+        toast.error('Security validation failed. Please refresh the page and try again.');
+        return;
+      }
+    }
+
+    // Check for suspicious activity
+    if (suspiciousActivity) {
+      toast.error('Please slow down and fill out the form carefully.');
+      return;
+    }
+
+    // Additional validation for form timing (prevent too fast submissions)
+    if (formStartTime && Date.now() - formStartTime < 3000) {
+      toast.error('Please take a moment to review your information before submitting.');
+      return;
+    }
+
+    // Sanitize data before submission
+    const sanitizedData = {
+      ...data,
+      name: sanitizeInput(data.name),
+      email: sanitizeInput(data.email),
+      message: sanitizeInput(data.message),
+      phone: data.phone ? sanitizeInput(data.phone) : undefined,
+    };
+    
+    setIsSubmitting(true);
+    setRetryCount(0);
+    const toastId = toast.loading('Sending message...');
+
+    try {
+      await submitWithRetry(sanitizedData);
 
       // Track successful submission
       if (formStartTime) {
@@ -178,7 +460,11 @@ const ContactPage = () => {
       let errorMessage = 'Failed to send message. Please try again.';
       
       if (err instanceof Error) {
-        if (err.message.includes('network') || err.message.includes('fetch')) {
+        if (err.message.includes('Rate limit') || err.message.includes('wait before')) {
+          errorMessage = 'Please wait a moment before submitting again.';
+        } else if (err.message.includes('timeout')) {
+          errorMessage = 'Request timeout. Please check your connection and try again.';
+        } else if (err.message.includes('network') || err.message.includes('fetch')) {
           errorMessage = 'Network error. Please check your connection and try again.';
         } else if (err.message.includes('429')) {
           errorMessage = 'Too many requests. Please wait a moment and try again.';
@@ -186,6 +472,8 @@ const ContactPage = () => {
           errorMessage = 'Server error. Please try again in a few minutes.';
         } else if (err.message.includes('400')) {
           errorMessage = 'Invalid data. Please check your information and try again.';
+        } else {
+          errorMessage = err.message;
         }
       }
       
@@ -195,6 +483,7 @@ const ContactPage = () => {
       });
     } finally {
       setIsSubmitting(false);
+      setRetryCount(0);
     }
   };
 
@@ -371,30 +660,219 @@ const ContactPage = () => {
     handleFormChange();
   }, [handleFormChange]);
 
+  // Advanced accessibility functions
+  const announceToScreenReader = useCallback((message: string) => {
+    setAnnouncements(prev => [...prev, message]);
+    // Clear announcement after it's been read
+    setTimeout(() => {
+      setAnnouncements(prev => prev.slice(1));
+    }, 1000);
+  }, []);
+
+  // Focus management for better accessibility
+  const handleFieldFocus = useCallback((fieldName: string) => {
+    setFocusedField(fieldName);
+  }, []);
+
+  const handleFieldBlurEnhanced = useCallback(async (fieldName: keyof ContactFormInputs) => {
+    await trigger(fieldName);
+    trackFieldInteraction(fieldName);
+    setFocusedField(null);
+    
+    // Announce validation result to screen readers
+    if (errors[fieldName]) {
+      announceToScreenReader(`${fieldName} field has an error: ${getFieldError(fieldName)}`);
+    } else if (touchedFields[fieldName] && watchedFields[fieldName]) {
+      announceToScreenReader(`${fieldName} field is valid`);
+    }
+  }, [trigger, trackFieldInteraction, errors, touchedFields, watchedFields, announceToScreenReader, getFieldError]);
+
+  // Enhanced keyboard navigation
+  const handleFormKeyDown = useCallback((e: React.KeyboardEvent) => {
+    // Skip to submit button with Ctrl/Cmd + Enter
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && isValid) {
+      e.preventDefault();
+      submitButtonRef.current?.focus();
+      announceToScreenReader('Focused on submit button. Press Enter to submit the form.');
+    }
+  }, [isValid, announceToScreenReader]);
+
+  // Progress announcement for screen readers
+  useEffect(() => {
+    if (formProgress === 100) {
+      announceToScreenReader('Form is complete and ready to submit');
+    } else if (formProgress >= 75) {
+      announceToScreenReader('Form is almost complete');
+    } else if (formProgress >= 50) {
+      announceToScreenReader('Form is halfway complete');
+    } else if (formProgress >= 25) {
+      announceToScreenReader('Form progress: one quarter complete');
+    }
+  }, [formProgress, announceToScreenReader]);
+
+  // Enhanced field validation with accessibility feedback
+  const getFieldErrorWithA11y = useCallback((fieldName: keyof ContactFormInputs) => {
+    const error = getFieldError(fieldName);
+    if (error && focusedField !== fieldName) {
+      // Only announce error if field is not currently focused (to avoid spam)
+      return error;
+    }
+    return error;
+  }, [getFieldError, focusedField]);
+
+  // Enhanced animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
         staggerChildren: 0.1,
+        delayChildren: 0.2,
       },
     },
   };
 
   const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
+    hidden: { y: 30, opacity: 0, scale: 0.95 },
     visible: {
       y: 0,
       opacity: 1,
+      scale: 1,
       transition: {
-        duration: 0.4,
+        duration: 0.5,
+        type: "spring",
+        stiffness: 100,
+        damping: 15,
       },
     },
   };
 
+  const fieldVariants = {
+    focus: {
+      scale: 1.02,
+      boxShadow: "0 4px 12px rgba(37, 99, 235, 0.15)",
+      transition: { duration: 0.2 }
+    },
+    blur: {
+      scale: 1,
+      boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+      transition: { duration: 0.2 }
+    }
+  };
+
+  const progressVariants = {
+    initial: { width: 0, opacity: 0 },
+    animate: (progress: number) => ({
+      width: `${progress}%`,
+      opacity: 1,
+      transition: {
+        width: { duration: 0.8, ease: "easeOut" },
+        opacity: { duration: 0.3 }
+      }
+    })
+  };
+
+  const pulseVariants = {
+    pulse: {
+      scale: [1, 1.05, 1],
+      transition: { duration: 2, repeat: Infinity }
+    }
+  };
+
+  const floatVariants = {
+    float: {
+      y: [-2, 2, -2],
+      transition: { duration: 3, repeat: Infinity, ease: "easeInOut" }
+    }
+  };
+
+  // SEO structured data
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "name": "Contact DEVSIRCH HUB",
+    "description": "Get in touch with DEVSIRCH HUB for professional IT services, web development, cybersecurity, and digital solutions in Nairobi, Kenya.",
+    "url": "https://devsirchhub.com/contact",
+    "mainEntity": {
+      "@type": "Organization",
+      "name": "DEVSIRCH HUB",
+      "email": "devsirchhub@gmail.com",
+      "telephone": "+254759773145",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Nairobi",
+        "addressCountry": "Kenya"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+254759773145",
+        "email": "devsirchhub@gmail.com",
+        "contactType": "customer service",
+        "areaServed": "KE",
+        "availableLanguage": "English"
+      },
+      "sameAs": [
+        "https://linkedin.com/company/devsirchhub",
+        "https://twitter.com/devsirchhub"
+      ]
+    }
+  };
+
   return (
     <>
-      <Toaster 
+      <Head>
+        {/* Primary Meta Tags */}
+        <title>Contact Us - DEVSIRCH HUB | Professional IT Services in Nairobi</title>
+        <meta name="title" content="Contact Us - DEVSIRCH HUB | Professional IT Services in Nairobi" />
+        <meta name="description" content="Get in touch with DEVSIRCH HUB for expert IT consulting, web development, cybersecurity, and digital transformation services. Free consultation available." />
+        <meta name="keywords" content="contact DEVSIRCH HUB, IT services Nairobi, web development Kenya, cybersecurity consultation, digital transformation" />
+        <meta name="robots" content="index, follow" />
+        <meta name="language" content="English" />
+        <meta name="author" content="DEVSIRCH HUB" />
+        
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://devsirchhub.com/contact" />
+        <meta property="og:title" content="Contact DEVSIRCH HUB - Professional IT Services" />
+        <meta property="og:description" content="Ready to transform your business with cutting-edge IT solutions? Contact our expert team for a free consultation." />
+        <meta property="og:image" content="https://devsirchhub.com/images/contact-og-image.jpg" />
+        <meta property="og:site_name" content="DEVSIRCH HUB" />
+        <meta property="og:locale" content="en_US" />
+        
+        {/* Twitter */}
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content="https://devsirchhub.com/contact" />
+        <meta property="twitter:title" content="Contact DEVSIRCH HUB - Professional IT Services" />
+        <meta property="twitter:description" content="Ready to transform your business with cutting-edge IT solutions? Contact our expert team for a free consultation." />
+        <meta property="twitter:image" content="https://devsirchhub.com/images/contact-twitter-image.jpg" />
+        <meta property="twitter:site" content="@devsirchhub" />
+        
+        {/* Additional Meta Tags */}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="theme-color" content="#2563eb" />
+        <meta name="format-detection" content="telephone=no" />
+        <link rel="canonical" href="https://devsirchhub.com/contact" />
+        
+        {/* Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+      </Head>
+
+      {/* Screen Reader Announcements */}
+      <div 
+        aria-live="polite" 
+        aria-atomic="true" 
+        className="sr-only"
+        role="status"
+      >
+        {announcements.map((announcement, index) => (
+          <div key={index}>{announcement}</div>
+        ))}
+      </div>
+
+      <LazyToaster 
         position="top-right"
         containerStyle={{
           top: 64,
@@ -436,21 +914,64 @@ const ContactPage = () => {
               Ready to discuss your project? Let&apos;s talk about how we can help bring your vision to life.
             </p>
             
-            {/* Trust Signals */}
-            <div className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-4 sm:gap-6 lg:gap-8 text-gray-600 px-4" role="list" aria-label="Trust signals">
-              <div className="flex items-center gap-2" role="listitem">
-                <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" aria-hidden="true" />
+            {/* Enhanced Trust Signals */}
+            <motion.div 
+              className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-4 sm:gap-6 lg:gap-8 text-gray-600 px-4" 
+              role="list" 
+              aria-label="Trust signals"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8, duration: 0.6 }}
+            >
+              <motion.div 
+                className="flex items-center gap-2" 
+                role="listitem"
+                variants={floatVariants}
+                animate="float"
+                whileHover={{ scale: 1.05 }}
+                transition={{ delay: 0 }}
+              >
+                <motion.div
+                  whileHover={{ rotate: [0, -10, 10, -10, 0] }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" aria-hidden="true" />
+                </motion.div>
                 <span className="text-xs sm:text-sm font-medium">24hr response</span>
-              </div>
-              <div className="flex items-center gap-2" role="listitem">
-                <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" aria-hidden="true" />
+              </motion.div>
+              <motion.div 
+                className="flex items-center gap-2" 
+                role="listitem"
+                variants={floatVariants}
+                animate="float"
+                whileHover={{ scale: 1.05 }}
+                transition={{ delay: 1 }}
+              >
+                <motion.div
+                  whileHover={{ rotate: [0, -10, 10, -10, 0] }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" aria-hidden="true" />
+                </motion.div>
                 <span className="text-xs sm:text-sm font-medium">Free consultation</span>
-              </div>
-              <div className="flex items-center gap-2" role="listitem">
-                <Users className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" aria-hidden="true" />
+              </motion.div>
+              <motion.div 
+                className="flex items-center gap-2" 
+                role="listitem"
+                variants={floatVariants}
+                animate="float"
+                whileHover={{ scale: 1.05 }}
+                transition={{ delay: 2 }}
+              >
+                <motion.div
+                  whileHover={{ rotate: [0, -10, 10, -10, 0] }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <Users className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" aria-hidden="true" />
+                </motion.div>
                 <span className="text-xs sm:text-sm font-medium">Expert team</span>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </motion.div>
         </div>
       </section>
@@ -513,42 +1034,108 @@ const ContactPage = () => {
                       )}
                     </AnimatePresence>
                     
-                    {/* Progress Indicator */}
-                    <div className="mt-4 sm:mt-6" role="progressbar" aria-valuenow={formProgress} aria-valuemin={0} aria-valuemax={100} aria-label="Form completion progress">
-                      <div className="flex items-center justify-between mb-2">
+                    {/* Enhanced Progress Indicator */}
+                    <motion.div 
+                      className="mt-4 sm:mt-6" 
+                      role="progressbar" 
+                      aria-valuenow={formProgress} 
+                      aria-valuemin={0} 
+                      aria-valuemax={100} 
+                      aria-label="Form completion progress"
+                      variants={itemVariants}
+                    >
+                      <motion.div 
+                        className="flex items-center justify-between mb-2"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.3 }}
+                      >
                         <span className="text-xs sm:text-sm font-medium text-gray-600">Form Progress</span>
-                        <span className="text-xs sm:text-sm font-medium text-blue-600">{Math.round(formProgress)}%</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <motion.span 
+                          className="text-xs sm:text-sm font-medium text-blue-600"
+                          key={formProgress}
+                          initial={{ scale: 1.2, color: "#10B981" }}
+                          animate={{ scale: 1, color: "#2563eb" }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          {Math.round(formProgress)}%
+                        </motion.span>
+                      </motion.div>
+                      
+                      <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
                         <motion.div
-                          className="bg-blue-600 h-2 rounded-full transition-all duration-500"
-                          initial={{ width: 0 }}
-                          animate={{ width: `${formProgress}%` }}
-                        />
+                          className="h-2 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 relative"
+                          variants={progressVariants}
+                          initial="initial"
+                          animate="animate"
+                          custom={formProgress}
+                        >
+                          {/* Animated shine effect */}
+                          <motion.div
+                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30"
+                            animate={{
+                              x: ["-100%", "100%"]
+                            }}
+                            transition={{
+                              duration: 1.5,
+                              repeat: Infinity,
+                              repeatDelay: 2
+                            }}
+                          />
+                        </motion.div>
                       </div>
+                      
                       <AnimatePresence>
                         {formProgress === 100 && (
                           <motion.p
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
+                            initial={{ opacity: 0, y: 10, scale: 0.8 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -10, scale: 0.8 }}
                             className="text-green-600 text-xs sm:text-sm font-medium mt-2 flex items-center gap-2"
                             role="status"
                             aria-live="polite"
                           >
-                            <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                            <motion.svg 
+                              className="w-3 h-3 sm:w-4 sm:h-4" 
+                              fill="currentColor" 
+                              viewBox="0 0 20 20" 
+                              aria-hidden="true"
+                              initial={{ scale: 0, rotate: -180 }}
+                              animate={{ scale: 1, rotate: 0 }}
+                              transition={{ 
+                                scale: { type: "spring", stiffness: 200, damping: 10 },
+                                rotate: { duration: 0.3 }
+                              }}
+                            >
                               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                            </svg>
-                            All required fields completed! You can now submit the form.
+                            </motion.svg>
+                            <motion.span
+                              variants={pulseVariants}
+                              animate="pulse"
+                            >
+                              All required fields completed! You can now submit the form.
+                            </motion.span>
                           </motion.p>
                         )}
                       </AnimatePresence>
-                    </div>
+                    </motion.div>
                   </div>
 
-                  <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4 sm:space-y-6">
+                  <form 
+                    ref={formRef}
+                    onSubmit={handleSubmit(onSubmit)} 
+                    onKeyDown={handleFormKeyDown}
+                    noValidate 
+                    className="space-y-4 sm:space-y-6"
+                    role="form"
+                    aria-label="Contact form for DEVSIRCH HUB"
+                  >
                     {/* Honeypot field */}
-                    <input type="text" id="honeypot" style={{ display: 'none' }} {...register('honeypot')} />
+                    <input type="text" id="honeypot" style={{ display: 'none' }} {...register('honeypot')} tabIndex={-1} aria-hidden="true" />
+                    
+                    {/* CSRF Token - Hidden security field */}
+                    <input type="hidden" name="_token" value={csrfToken} />
+                    <input type="hidden" name="_session" value={sessionId} />
 
                     {/* Name Field */}
                     <div className="relative">
@@ -821,6 +1408,7 @@ const ContactPage = () => {
                       )}
 
                       <motion.button
+                        ref={submitButtonRef}
                         type="submit"
                         disabled={isSubmitting || !isValid}
                         className={`w-full font-bold py-3 sm:py-4 px-6 sm:px-8 rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-300 flex items-center justify-center text-base sm:text-lg ${
@@ -832,13 +1420,14 @@ const ContactPage = () => {
                         }`}
                         whileHover={isValid && !isSubmitting ? { scale: 1.02, y: -2 } : {}}
                         whileTap={isValid && !isSubmitting ? { scale: 0.98 } : {}}
-                        aria-label="Send message"
+                        aria-label={isSubmitting ? 'Sending message...' : !isValid ? 'Complete required fields to submit' : 'Send message'}
                         aria-describedby={!isValid ? 'submit-status' : undefined}
+                        aria-live="polite"
                       >
                         {isSubmitting ? (
                           <>
                             <Loader2 className="mr-2 sm:mr-3 h-4 w-4 sm:h-5 sm:w-5 animate-spin" aria-hidden="true" />
-                            Sending Message...
+                            {retryCount > 0 ? `Retrying... (${retryCount}/3)` : 'Sending Message...'}
                           </>
                         ) : !isValid ? (
                           <>
@@ -983,6 +1572,8 @@ const ContactPage = () => {
       </main>
     </>
   );
-};
+});
+
+ContactPage.displayName = 'ContactPage';
 
 export default ContactPage;
