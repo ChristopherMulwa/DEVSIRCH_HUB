@@ -189,16 +189,7 @@ const ContactPage = () => {
       
       toast.error(errorMessage, { 
         id: toastId,
-        duration: 8000,
-        action: {
-          label: 'Retry',
-          onClick: () => {
-            // Auto-retry after 3 seconds
-            setTimeout(() => {
-              handleSubmit(onSubmit)();
-            }, 3000);
-          }
-        }
+        duration: 8000
       });
     } finally {
       setIsSubmitting(false);
