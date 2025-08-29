@@ -9,7 +9,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Phone, MapPin, Loader2, Send, Shield, Clock, Users } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
-import Image from 'next/image';
 import Link from 'next/link';
 
 // Dynamically import the Map component to prevent SSR issues
@@ -43,7 +42,7 @@ const ContactPage = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid, isDirty, touchedFields },
+    formState: { errors, isValid, touchedFields },
     reset,
     watch,
     trigger,
@@ -107,7 +106,7 @@ const ContactPage = () => {
         throw new Error('Something went wrong');
       }
 
-      toast.success('Message sent successfully! We\'ll get back to you within 24 hours.', { id: toastId });
+      toast.success('Message sent successfully! We&apos;ll get back to you within 24 hours.', { id: toastId });
       reset();
       setShowPhoneField(false);
       setFormProgress(0);
@@ -180,7 +179,7 @@ const ContactPage = () => {
               Contact Us
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-6 sm:mb-8 max-w-3xl mx-auto px-4">
-              Ready to discuss your project? Let's talk about how we can help bring your vision to life.
+              Ready to discuss your project? Let&apos;s talk about how we can help bring your vision to life.
             </p>
             
             {/* Trust Signals */}
@@ -217,10 +216,10 @@ const ContactPage = () => {
                 <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 md:p-12 border border-gray-100">
                   <div className="mb-6 sm:mb-8">
                     <h2 id="contact-form-header" className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
-                      Let's Connect
+                      Let&apos;s Connect
                     </h2>
                     <p className="text-gray-600 text-base sm:text-lg">
-                      Have a project in mind or just want to say hello? Fill out the form and we'll get back to you within 24 hours.
+                      Have a project in mind or just want to say hello? Fill out the form and we&apos;ll get back to you within 24 hours.
                     </p>
                     
                     {/* Progress Indicator */}
@@ -538,7 +537,7 @@ const ContactPage = () => {
                   <div className="mb-6 sm:mb-8">
                     <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">Get in Touch</h2>
                     <p className="text-blue-100 text-base sm:text-lg mb-6 sm:mb-8">
-                      We're here to help bring your digital vision to life. Reach out through any of these channels.
+                      We&apos;re here to help bring your digital vision to life. Reach out through any of these channels.
                     </p>
                   </div>
 
@@ -608,7 +607,7 @@ const ContactPage = () => {
                       <Map />
                     </div>
                     <p className="text-blue-200 text-xs sm:text-sm text-center">
-                      Located in the heart of Nairobi's tech district
+                      Located in the heart of Nairobi&apos;s tech district
                     </p>
                   </div>
                 </div>
