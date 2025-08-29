@@ -162,7 +162,9 @@ const ContactPage = () => {
       }
 
       // Clear localStorage after successful submission
-      localStorage.removeItem('contactFormData');
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('contactFormData');
+      }
 
       toast.success('Message sent successfully! We&apos;ll get back to you within 24 hours.', { id: toastId });
       reset();
@@ -322,6 +324,8 @@ const ContactPage = () => {
 
   // Auto-save form data to localStorage
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
     const savedData = localStorage.getItem('contactFormData');
     if (savedData) {
       try {
@@ -347,6 +351,8 @@ const ContactPage = () => {
 
   // Save form data as user types
   const handleFormChange = useCallback(() => {
+    if (typeof window === 'undefined') return;
+    
     const formData = {
       name: watchedFields.name || '',
       email: watchedFields.email || '',
@@ -472,7 +478,7 @@ const ContactPage = () => {
                     
                     {/* Form Recovery Notification */}
                     <AnimatePresence>
-                      {localStorage.getItem('contactFormData') && (
+                      {typeof window !== 'undefined' && localStorage.getItem('contactFormData') && (
                         <motion.div
                           initial={{ opacity: 0, y: -10 }}
                           animate={{ opacity: 1, y: 0 }}
@@ -490,8 +496,10 @@ const ContactPage = () => {
                             </div>
                             <button
                               onClick={() => {
-                                localStorage.removeItem('contactFormData');
-                                window.location.reload();
+                                if (typeof window !== 'undefined') {
+                                  localStorage.removeItem('contactFormData');
+                                  window.location.reload();
+                                }
                               }}
                               className="text-blue-600 hover:text-blue-800 text-xs font-medium underline"
                             >
