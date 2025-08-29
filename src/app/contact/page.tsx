@@ -38,6 +38,9 @@ const ContactPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPhoneField, setShowPhoneField] = useState(false);
   const [formProgress, setFormProgress] = useState(0);
+  const [formStartTime, setFormStartTime] = useState<number | null>(null);
+  const [fieldInteractions, setFieldInteractions] = useState<Record<string, number>>({});
+  const [formAbandonment, setFormAbandonment] = useState(false);
 
   const {
     register,
@@ -70,6 +73,49 @@ const ContactPage = () => {
     setFormProgress(progress);
   }, [progress]);
 
+  // Track form start time
+  useEffect(() => {
+    setFormStartTime(Date.now());
+    
+    // Track form abandonment
+    const handleBeforeUnload = () => {
+      if (formStartTime && progress > 0 && progress < 100) {
+        setFormAbandonment(true);
+        // Send analytics data
+        trackFormAbandonment(progress, Date.now() - formStartTime);
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
+
+  // Track field interactions
+  const trackFieldInteraction = useCallback((fieldName: string) => {
+    setFieldInteractions(prev => ({
+      ...prev,
+      [fieldName]: (prev[fieldName] || 0) + 1
+    }));
+  }, []);
+
+  // Track form abandonment
+  const trackFormAbandonment = useCallback((progress: number, timeSpent: number) => {
+    // Send to analytics service
+    console.log('Form abandoned:', { progress, timeSpent, fieldInteractions });
+    
+    // You can integrate with Google Analytics, Mixpanel, etc.
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', 'form_abandonment', {
+        event_category: 'Contact Form',
+        event_label: `Progress: ${progress}%`,
+        value: Math.round(timeSpent / 1000), // Time in seconds
+        custom_parameters: {
+          field_interactions: JSON.stringify(fieldInteractions)
+        }
+      });
+    }
+  }, [fieldInteractions]);
+
   // Watch email field for progressive disclosure
   const emailValue = watch('email');
   
@@ -83,13 +129,15 @@ const ContactPage = () => {
   // Real-time validation on blur - memoized for performance
   const handleFieldBlur = useCallback(async (fieldName: keyof ContactFormInputs) => {
     await trigger(fieldName);
-  }, [trigger]);
+    trackFieldInteraction(fieldName);
+  }, [trigger, trackFieldInteraction]);
 
   const onSubmit: SubmitHandler<ContactFormInputs> = async (data) => {
     if (data.honeypot) {
         console.log("Bot submission detected");
         return;
     }
+    
     setIsSubmitting(true);
     const toastId = toast.loading('Sending message...');
 
@@ -103,19 +151,237 @@ const ContactPage = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Something went wrong');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
       }
+
+      // Track successful submission
+      if (formStartTime) {
+        const timeToComplete = Date.now() - formStartTime;
+        trackFormSubmission(timeToComplete, fieldInteractions);
+      }
+
+      // Clear localStorage after successful submission
+      localStorage.removeItem('contactFormData');
 
       toast.success('Message sent successfully! We&apos;ll get back to you within 24 hours.', { id: toastId });
       reset();
       setShowPhoneField(false);
       setFormProgress(0);
-    } catch {
-      toast.error('Failed to send message. Please try again or contact us directly.', { id: toastId });
+      setFormStartTime(null);
+      setFieldInteractions({});
+    } catch (error) {
+      console.error('Form submission error:', error);
+      
+      let errorMessage = 'Failed to send message. Please try again.';
+      
+      if (error instanceof Error) {
+        if (error.message.includes('network') || error.message.includes('fetch')) {
+          errorMessage = 'Network error. Please check your connection and try again.';
+        } else if (error.message.includes('429')) {
+          errorMessage = 'Too many requests. Please wait a moment and try again.';
+        } else if (error.message.includes('500')) {
+          errorMessage = 'Server error. Please try again in a few minutes.';
+        } else if (error.message.includes('400')) {
+          errorMessage = 'Invalid data. Please check your information and try again.';
+        }
+      }
+      
+      toast.error(errorMessage, { 
+        id: toastId,
+        duration: 8000,
+        action: {
+          label: 'Retry',
+          onClick: () => {
+            // Auto-retry after 3 seconds
+            setTimeout(() => {
+              handleSubmit(onSubmit)();
+            }, 3000);
+          }
+        }
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  // Enhanced field validation with better error messages
+  const getFieldError = useCallback((fieldName: keyof ContactFormInputs) => {
+    const error = errors[fieldName];
+    if (!error) return null;
+
+    // Custom error messages for better UX
+    const customMessages: Record<string, string> = {
+      name: 'Please enter your full name (at least 2 characters)',
+      email: 'Please enter a valid email address (e.g., user@example.com)',
+      message: 'Please provide more details about your project (at least 10 characters)',
+      consent: 'You must agree to the Privacy Policy to continue'
+    };
+
+    return customMessages[fieldName] || error.message;
+  }, [errors]);
+
+  // Field completion status for better UX
+  const getFieldStatus = useCallback((fieldName: keyof ContactFormInputs) => {
+    const hasValue = watchedFields[fieldName];
+    const hasError = errors[fieldName];
+    const isTouched = touchedFields[fieldName];
+
+    if (hasError) return 'error';
+    if (isTouched && hasValue && !hasError) return 'success';
+    if (isTouched && !hasValue) return 'warning';
+    return 'neutral';
+  }, [watchedFields, errors, touchedFields]);
+
+  // Smart field hints
+  const getFieldHint = useCallback((fieldName: keyof ContactFormInputs) => {
+    const hints: Record<string, string> = {
+      name: 'Enter your full name as it appears on official documents',
+      email: 'We&apos;ll use this to send you project updates and responses',
+      phone: 'Optional - helpful for urgent matters or complex discussions',
+      message: 'Tell us about your project goals, timeline, and budget',
+      consent: 'Please read and agree to the Privacy Policy to continue'
+    };
+
+    return hints[fieldName] || '';
+  }, []);
+
+  // Track form submission
+  const trackFormSubmission = useCallback((timeToComplete: number, interactions: Record<string, number>) => {
+    console.log('Form submitted successfully:', { timeToComplete, interactions });
+    
+    // Send to analytics service
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', 'form_submission', {
+        event_category: 'Contact Form',
+        event_label: 'Success',
+        value: Math.round(timeToComplete / 1000), // Time in seconds
+        custom_parameters: {
+          field_interactions: JSON.stringify(interactions),
+          form_progress: formProgress
+        }
+      });
+    }
+  }, [formProgress]);
+
+  // Smart form suggestions
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [activeSuggestion, setActiveSuggestion] = useState(0);
+
+  // Common project types for smart suggestions
+  const projectSuggestions = useMemo(() => [
+    "Web Application Development",
+    "Mobile App Development", 
+    "E-commerce Website",
+    "Corporate Website Redesign",
+    "Cybersecurity Audit",
+    "IT Infrastructure Setup",
+    "Cloud Migration",
+    "Data Analytics Dashboard",
+    "API Integration",
+    "Custom Software Solution"
+  ], []);
+
+  // Generate smart suggestions based on user input
+  const generateSuggestions = useCallback((input: string) => {
+    if (input.length < 3) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    const filtered = projectSuggestions.filter(suggestion =>
+      suggestion.toLowerCase().includes(input.toLowerCase())
+    );
+    
+    setSuggestions(filtered.slice(0, 3));
+    setShowSuggestions(filtered.length > 0);
+    setActiveSuggestion(0);
+  }, [projectSuggestions]);
+
+  // Handle suggestion selection
+  const handleSuggestionSelect = useCallback((suggestion: string) => {
+    const messageField = document.getElementById('message') as HTMLTextAreaElement;
+    if (messageField) {
+      messageField.value = `I'm interested in ${suggestion}. `;
+      messageField.focus();
+      // Trigger form validation
+      trigger('message');
+    }
+    setShowSuggestions(false);
+    setSuggestions([]);
+  }, [trigger]);
+
+  // Handle keyboard navigation for suggestions
+  const handleSuggestionKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (!showSuggestions) return;
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setActiveSuggestion(prev => (prev + 1) % suggestions.length);
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setActiveSuggestion(prev => (prev - 1 + suggestions.length) % suggestions.length);
+        break;
+      case 'Enter':
+        e.preventDefault();
+        if (suggestions[activeSuggestion]) {
+          handleSuggestionSelect(suggestions[activeSuggestion]);
+        }
+        break;
+      case 'Escape':
+        setShowSuggestions(false);
+        break;
+    }
+  }, [showSuggestions, suggestions, activeSuggestion, handleSuggestionSelect]);
+
+  // Auto-save form data to localStorage
+  useEffect(() => {
+    const savedData = localStorage.getItem('contactFormData');
+    if (savedData) {
+      try {
+        const parsed = JSON.parse(savedData);
+        // Restore form data if it's recent (within 1 hour)
+        if (Date.now() - parsed.timestamp < 3600000) {
+          Object.keys(parsed.data).forEach(key => {
+            if (key !== 'honeypot') {
+              const field = document.getElementById(key) as HTMLInputElement | HTMLTextAreaElement;
+              if (field) {
+                field.value = parsed.data[key];
+                // Trigger validation
+                trigger(key as keyof ContactFormInputs);
+              }
+            }
+          });
+        }
+      } catch (error) {
+        console.log('Failed to restore form data');
+      }
+    }
+  }, [trigger]);
+
+  // Save form data as user types
+  const handleFormChange = useCallback(() => {
+    const formData = {
+      name: watchedFields.name || '',
+      email: watchedFields.email || '',
+      phone: watchedFields.phone || '',
+      message: watchedFields.message || ''
+    };
+
+    localStorage.setItem('contactFormData', JSON.stringify({
+      data: formData,
+      timestamp: Date.now()
+    }));
+  }, [watchedFields]);
+
+  // Auto-save on form changes
+  useEffect(() => {
+    handleFormChange();
+  }, [handleFormChange]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -222,6 +488,41 @@ const ContactPage = () => {
                       Have a project in mind or just want to say hello? Fill out the form and we&apos;ll get back to you within 24 hours.
                     </p>
                     
+                    {/* Form Recovery Notification */}
+                    <AnimatePresence>
+                      {localStorage.getItem('contactFormData') && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                              </svg>
+                              <span className="text-blue-700 text-sm font-medium">
+                                📝 We found your previous form data
+                              </span>
+                            </div>
+                            <button
+                              onClick={() => {
+                                localStorage.removeItem('contactFormData');
+                                window.location.reload();
+                              }}
+                              className="text-blue-600 hover:text-blue-800 text-xs font-medium underline"
+                            >
+                              Clear
+                            </button>
+                          </div>
+                          <p className="text-blue-600 text-xs mt-1">
+                            Your information has been restored. You can continue where you left off!
+                          </p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                    
                     {/* Progress Indicator */}
                     <div className="mt-4 sm:mt-6" role="progressbar" aria-valuenow={formProgress} aria-valuemin={0} aria-valuemax={100} aria-label="Form completion progress">
                       <div className="flex items-center justify-between mb-2">
@@ -279,6 +580,12 @@ const ContactPage = () => {
                       >
                         Full Name *
                       </label>
+                      
+                      {/* Field Hint */}
+                      <p className="text-xs text-gray-500 mt-2 px-1">
+                        💡 {getFieldHint('name')}
+                      </p>
+                      
                       {errors.name && (
                         <motion.p 
                           id="name-error"
@@ -291,7 +598,7 @@ const ContactPage = () => {
                           <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                           </svg>
-                          {errors.name.message}
+                          {getFieldError('name')}
                         </motion.p>
                       )}
                       {touchedFields.name && !errors.name && (
@@ -328,6 +635,12 @@ const ContactPage = () => {
                       >
                         Email Address *
                       </label>
+                      
+                      {/* Field Hint */}
+                      <p className="text-xs text-gray-500 mt-2 px-1">
+                        💡 {getFieldHint('email')}
+                      </p>
+                      
                       {errors.email && (
                         <motion.p 
                           id="email-error"
@@ -340,7 +653,7 @@ const ContactPage = () => {
                           <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                           </svg>
-                          {errors.email.message}
+                          {getFieldError('email')}
                         </motion.p>
                       )}
                       {touchedFields.email && !errors.email && (
@@ -392,6 +705,12 @@ const ContactPage = () => {
                         id="message"
                         {...register('message')}
                         onBlur={() => handleFieldBlur('message')}
+                        onKeyDown={handleSuggestionKeyDown}
+                        onChange={(e) => {
+                          generateSuggestions(e.target.value);
+                          // Trigger form validation
+                          trigger('message');
+                        }}
                         rows={5}
                         className={`peer w-full px-3 sm:px-4 py-3 sm:py-4 bg-gray-50 rounded-xl text-gray-800 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all duration-200 resize-none text-sm sm:text-base ${errors.message ? 'focus:ring-red-500 border-red-200 bg-red-50' : touchedFields.message && !errors.message ? 'border-green-200 bg-green-50' : 'border border-gray-200'}`}
                         placeholder="Your Message"
@@ -406,6 +725,42 @@ const ContactPage = () => {
                       >
                         Your Message *
                       </label>
+                      
+                      {/* Smart Suggestions */}
+                      <AnimatePresence>
+                        {showSuggestions && (
+                          <motion.div
+                            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                            className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-lg z-10 overflow-hidden"
+                          >
+                            <div className="p-2">
+                              <p className="text-xs text-gray-500 px-3 py-1 mb-2">Quick suggestions:</p>
+                              {suggestions.map((suggestion, index) => (
+                                <button
+                                  key={suggestion}
+                                  type="button"
+                                  onClick={() => handleSuggestionSelect(suggestion)}
+                                  className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
+                                    index === activeSuggestion
+                                      ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                                      : 'hover:bg-gray-50 text-gray-700'
+                                  }`}
+                                >
+                                  {suggestion}
+                                </button>
+                              ))}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                      
+                      {/* Field Hint */}
+                      <p className="text-xs text-gray-500 mt-2 px-1">
+                        💡 {getFieldHint('message')}
+                      </p>
+                      
                       {errors.message && (
                         <motion.p 
                           id="message-error"
@@ -418,7 +773,7 @@ const ContactPage = () => {
                           <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                           </svg>
-                          {errors.message.message}
+                          {getFieldError('message')}
                         </motion.p>
                       )}
                       {touchedFields.message && !errors.message && (
@@ -453,6 +808,12 @@ const ContactPage = () => {
                           I agree to the <Link href="/privacy-policy" className="text-blue-600 hover:underline font-medium">Privacy Policy</Link> and consent to being contacted about my inquiry.
                         </label>
                       </div>
+                      
+                      {/* Field Hint */}
+                      <p className="text-xs text-gray-500 px-1">
+                        💡 {getFieldHint('consent')}
+                      </p>
+                      
                       {errors.consent && (
                         <motion.p 
                           id="consent-error"
@@ -465,7 +826,7 @@ const ContactPage = () => {
                           <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                           </svg>
-                          {errors.consent.message}
+                          {getFieldError('consent')}
                         </motion.p>
                       )}
 
@@ -504,7 +865,7 @@ const ContactPage = () => {
                         )}
                       </motion.button>
                       
-                      {/* Form Completion Status */}
+                      {/* Enhanced Form Completion Status */}
                       <AnimatePresence>
                         {formProgress === 100 && !isSubmitting && (
                           <motion.div
@@ -523,9 +884,23 @@ const ContactPage = () => {
                               <span className="font-medium text-sm sm:text-base">Form Complete!</span>
                             </div>
                             <p className="text-green-600 text-xs sm:text-sm mt-1">All required fields are filled correctly.</p>
+                            <p className="text-green-500 text-xs mt-2">💡 You can now submit your message!</p>
                           </motion.div>
                         )}
                       </AnimatePresence>
+                      
+                      {/* Form Analytics Summary */}
+                      {formStartTime && (
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="text-center p-2 bg-blue-50 border border-blue-200 rounded-lg"
+                        >
+                          <p className="text-blue-600 text-xs">
+                            ⏱️ Time on form: {Math.round((Date.now() - formStartTime) / 1000)}s
+                          </p>
+                        </motion.div>
+                      )}
                     </div>
                   </form>
                 </div>
