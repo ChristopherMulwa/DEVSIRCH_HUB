@@ -1,7 +1,12 @@
 
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Check if API key is available
+if (!process.env.RESEND_API_KEY) {
+  console.warn('RESEND_API_KEY is not set. Email functionality will be disabled.');
+}
+
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 const adminEmail = process.env.ADMIN_EMAIL;
 
 const createEmailHtml = (title: string, message: string, name: string | null) => `
@@ -18,6 +23,13 @@ const createEmailHtml = (title: string, message: string, name: string | null) =>
 `;
 
 export async function POST(req: Request) {
+  // Check if Resend is configured
+  if (!resend) {
+    return new Response(JSON.stringify({ 
+      error: 'Email service is not configured. Please contact support.' 
+    }), { status: 503 });
+  }
+
   if (!adminEmail) {
     console.error('ADMIN_EMAIL environment variable is not set.');
     return new Response(JSON.stringify({ error: 'Server configuration error.' }), { status: 500 });
@@ -31,7 +43,7 @@ export async function POST(req: Request) {
 
     // 1. Send notification email to the admin
     const sendAdminEmail = resend.emails.send({
-      from: 'Sirch Solutions <onboarding@resend.dev>', // Replace with your verified domain
+      from: process.env.FROM_EMAIL || 'Sirch Solutions <onboarding@resend.dev>', // Use environment variable or fallback
       to: adminEmail,
       subject: emailSubject,
       html: `<p>You have a new submission from ${email}:</p><p>${message}</p>`,
@@ -39,7 +51,7 @@ export async function POST(req: Request) {
 
     // 2. Send confirmation email to the user
     const sendUserConfirmation = resend.emails.send({
-      from: 'Sirch Solutions <onboarding@resend.dev>', // Replace with your verified domain
+      from: process.env.FROM_EMAIL || 'Sirch Solutions <onboarding@resend.dev>', // Use environment variable or fallback
       to: email,
       subject: confirmationSubject,
       html: createEmailHtml(
