@@ -2,7 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import * as z from 'zod';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Check if API key is available
+const apiKey = process.env.RESEND_API_KEY;
+if (!apiKey) {
+  console.warn('RESEND_API_KEY is not set. Contact form will not work in production.');
+}
+
+const resend = apiKey ? new Resend(apiKey) : null;
 
 // Zod schema for validating the request body
 const contactSchema = z.object({
@@ -14,6 +20,13 @@ const contactSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
+    // Check if Resend is properly configured
+    if (!resend) {
+      return NextResponse.json({ 
+        message: 'Email service is not configured. Please set RESEND_API_KEY environment variable.' 
+      }, { status: 503 });
+    }
+
     const body = await req.json();
 
     // Validate the request body against the schema
@@ -26,8 +39,8 @@ export async function POST(req: NextRequest) {
     const { name, email, phone, message } = parsed.data;
 
     const { data, error } = await resend.emails.send({
-      from: 'onboarding@resend.dev', // This must be a verified domain on Resend
-      to: 'your-email@example.com', // Change this to your actual email address
+      from: process.env.FROM_EMAIL || 'onboarding@resend.dev',
+      to: process.env.CONTACT_EMAIL || 'your-email@example.com',
       subject: `New Contact Form Submission from ${name}`,
       replyTo: email,
       html: `
