@@ -40,7 +40,6 @@ const ContactPage = () => {
   const [formProgress, setFormProgress] = useState(0);
   const [formStartTime, setFormStartTime] = useState<number | null>(null);
   const [fieldInteractions, setFieldInteractions] = useState<Record<string, number>>({});
-  const [formAbandonment, setFormAbandonment] = useState(false);
 
   const {
     register,
@@ -73,39 +72,15 @@ const ContactPage = () => {
     setFormProgress(progress);
   }, [progress]);
 
-  // Track form start time
-  useEffect(() => {
-    setFormStartTime(Date.now());
-    
-    // Track form abandonment
-    const handleBeforeUnload = () => {
-      if (formStartTime && progress > 0 && progress < 100) {
-        setFormAbandonment(true);
-        // Send analytics data
-        trackFormAbandonment(progress, Date.now() - formStartTime);
-      }
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, []);
-
-  // Track field interactions
-  const trackFieldInteraction = useCallback((fieldName: string) => {
-    setFieldInteractions(prev => ({
-      ...prev,
-      [fieldName]: (prev[fieldName] || 0) + 1
-    }));
-  }, []);
-
   // Track form abandonment
   const trackFormAbandonment = useCallback((progress: number, timeSpent: number) => {
     // Send to analytics service
     console.log('Form abandoned:', { progress, timeSpent, fieldInteractions });
     
     // You can integrate with Google Analytics, Mixpanel, etc.
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', 'form_abandonment', {
+    if (typeof window !== 'undefined' && (window as unknown as { gtag?: Function }).gtag) {
+      const gtag = (window as unknown as { gtag: Function }).gtag;
+      gtag('event', 'form_abandonment', {
         event_category: 'Contact Form',
         event_label: `Progress: ${progress}%`,
         value: Math.round(timeSpent / 1000), // Time in seconds
@@ -115,6 +90,31 @@ const ContactPage = () => {
       });
     }
   }, [fieldInteractions]);
+
+  // Track form start time
+  useEffect(() => {
+    const startTime = Date.now();
+    setFormStartTime(startTime);
+    
+    // Track form abandonment
+    const handleBeforeUnload = () => {
+      if (startTime && progress > 0 && progress < 100) {
+        // Send analytics data
+        trackFormAbandonment(progress, Date.now() - startTime);
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [progress, trackFormAbandonment]);
+
+  // Track field interactions
+  const trackFieldInteraction = useCallback((fieldName: string) => {
+    setFieldInteractions(prev => ({
+      ...prev,
+      [fieldName]: (prev[fieldName] || 0) + 1
+    }));
+  }, []);
 
   // Watch email field for progressive disclosure
   const emailValue = watch('email');
@@ -170,19 +170,19 @@ const ContactPage = () => {
       setFormProgress(0);
       setFormStartTime(null);
       setFieldInteractions({});
-    } catch (error) {
-      console.error('Form submission error:', error);
+    } catch (err) {
+      console.error('Form submission error:', err);
       
       let errorMessage = 'Failed to send message. Please try again.';
       
-      if (error instanceof Error) {
-        if (error.message.includes('network') || error.message.includes('fetch')) {
+      if (err instanceof Error) {
+        if (err.message.includes('network') || err.message.includes('fetch')) {
           errorMessage = 'Network error. Please check your connection and try again.';
-        } else if (error.message.includes('429')) {
+        } else if (err.message.includes('429')) {
           errorMessage = 'Too many requests. Please wait a moment and try again.';
-        } else if (error.message.includes('500')) {
+        } else if (err.message.includes('500')) {
           errorMessage = 'Server error. Please try again in a few minutes.';
-        } else if (error.message.includes('400')) {
+        } else if (err.message.includes('400')) {
           errorMessage = 'Invalid data. Please check your information and try again.';
         }
       }
@@ -221,17 +221,7 @@ const ContactPage = () => {
     return customMessages[fieldName] || error.message;
   }, [errors]);
 
-  // Field completion status for better UX
-  const getFieldStatus = useCallback((fieldName: keyof ContactFormInputs) => {
-    const hasValue = watchedFields[fieldName];
-    const hasError = errors[fieldName];
-    const isTouched = touchedFields[fieldName];
 
-    if (hasError) return 'error';
-    if (isTouched && hasValue && !hasError) return 'success';
-    if (isTouched && !hasValue) return 'warning';
-    return 'neutral';
-  }, [watchedFields, errors, touchedFields]);
 
   // Smart field hints
   const getFieldHint = useCallback((fieldName: keyof ContactFormInputs) => {
@@ -251,8 +241,9 @@ const ContactPage = () => {
     console.log('Form submitted successfully:', { timeToComplete, interactions });
     
     // Send to analytics service
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', 'form_submission', {
+    if (typeof window !== 'undefined' && (window as unknown as { gtag?: Function }).gtag) {
+      const gtag = (window as unknown as { gtag: Function }).gtag;
+      gtag('event', 'form_submission', {
         event_category: 'Contact Form',
         event_label: 'Success',
         value: Math.round(timeToComplete / 1000), // Time in seconds
@@ -357,7 +348,7 @@ const ContactPage = () => {
             }
           });
         }
-      } catch (error) {
+      } catch {
         console.log('Failed to restore form data');
       }
     }
