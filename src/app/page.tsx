@@ -205,7 +205,7 @@ export default function Home() {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.4 }}
             className="text-center mt-16">
-            <Link href="/about" className="bg-white text-blue-600 font-bold py-4 px-8 rounded-full hover:bg-gray-200 transition duration-300 text-lg">
+            <Link href="/about" className="bg-white text-blue-600 font-bold py-3 px-6 md:py-4 md:px-8 rounded-full hover:bg-gray-200 transition duration-300 text-base md:text-lg whitespace-nowrap">
               Learn More About Our Approach
             </Link>
           </motion.div>

@@ -70,28 +70,45 @@ const values = [
 
 const AboutPageClient = () => {
   return (
-    <div className="bg-gray-50">
-      {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center text-white">
-        <Image
-          src="/AboutUsHero.png"
-          alt="About Us Hero Image"
-          fill
-          className="absolute inset-0 object-cover"
-        />
-        <div className="absolute inset-0 bg-black opacity-50"></div>
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8 }}
-          className="relative z-10 text-center">
-          <h1 className="text-5xl font-extrabold">We are DEVSIRCH HUB</h1>
-          <p className="mt-4 text-xl">Your Trusted Partner in Innovative IT Solutions</p>
-        </motion.div>
+    <div className="bg-gray-900 text-white">
+      {/* New Header Section */}
+      <section className="pt-24 pb-16 h-auto md:h-[calc(100vh-200px)] flex items-center">
+        <div className="container mx-auto px-4 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <h1 className="text-4xl md:text-5xl font-bold">Devsirch-HUB</h1>
+            <p className="mt-4 text-lg text-gray-300 max-w-3xl mx-auto">
+              Get to know a bit about the team and what drives us
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Our Guiding Principles Section */}
+      <section className="bg-gray-900 pt-12 pb-20 px-4">
+        <div className="container mx-auto">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-12">
+            <h2 className="text-4xl font-bold">Our Guiding Principles</h2>
+            <p className="text-gray-400 mt-2">The values that drive us forward.</p>
+          </motion.div>
+          <div className="grid md:grid-cols-3 gap-8 text-center">
+            {values.map((value, index) => (
+              <ValueCard key={index} icon={value.icon} title={value.title} description={value.description} delay={index * 0.2} />
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* Meet the Founder Section */}
-      <section className="pt-8 pb-20 px-4 bg-white">
+      <section className="pt-8 pb-20 px-4">
         <div className="container mx-auto">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -99,10 +116,10 @@ const AboutPageClient = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
             className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-800">Meet the Founder</h2>
-            <p className="text-gray-600 mt-2">The driving force behind our vision.</p>
+            <h2 className="text-4xl font-bold">Meet the Founder</h2>
+            <p className="text-gray-400 mt-2">The driving force behind our vision.</p>
           </motion.div>
-          <div className="flex flex-col md:flex-row items-center bg-gray-50 rounded-2xl shadow-xl overflow-hidden max-w-4xl mx-auto">
+          <div className="flex flex-col md:flex-row items-center">
             <motion.div 
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -114,7 +131,7 @@ const AboutPageClient = () => {
                 alt="Christopher Mulwa"
                 width={400}
                 height={400}
-                className="object-cover w-full h-full"
+                className="object-cover w-full h-full rounded-2xl"
               />
             </motion.div>
             <motion.div 
@@ -122,36 +139,16 @@ const AboutPageClient = () => {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.4 }}
-              className="w-full md:w-2/3 p-8 md:p-12">
-              <h3 className="text-3xl font-bold text-gray-900">Christopher Mulwa</h3>
-              <p className="text-blue-600 font-semibold mt-1">Founder & Principal IT Consultant</p>
-              <p className="mt-6 text-gray-700 leading-relaxed">
+              className="w-full md:w-2/3 p-8 md:p-12 text-left">
+              <h3 className="text-3xl font-bold">Christopher Mulwa</h3>
+              <p className="text-blue-400 font-semibold mt-1">Founder & Principal IT Consultant</p>
+              <p className="mt-6 text-gray-300 leading-relaxed">
                 &quot;I started DEVSIRCH HUB with a single mission: to provide businesses in Kenya with the robust, secure, and innovative IT solutions they need to thrive in a digital-first world. Technology should be an asset, not a vulnerability, and I&apos;m passionate about building that reality for our clients.&quot;
               </p>
-              <p className="mt-4 text-gray-700 leading-relaxed">
+              <p className="mt-4 text-gray-300 leading-relaxed">
                 With a deep-rooted expertise in cybersecurity and software development, I am personally invested in the success of every project. When you partner with us, you get a dedicated expert committed to understanding your challenges and delivering solutions that are not just effective, but transformative.
               </p>
             </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Our Guiding Principles Section */}
-      <section className="bg-white pt-12 pb-20 px-4">
-        <div className="container mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-800">Our Guiding Principles</h2>
-            <p className="text-gray-600 mt-2">The values that drive us forward.</p>
-          </motion.div>
-          <div className="grid md:grid-cols-3 gap-8 text-center">
-            {values.map((value, index) => (
-              <ValueCard key={index} icon={value.icon} title={value.title} description={value.description} delay={index * 0.2} />
-            ))}
           </div>
         </div>
       </section>
@@ -165,8 +162,8 @@ const AboutPageClient = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
             className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-800">Our Journey</h2>
-            <p className="text-gray-600 mt-2">A timeline of our growth and achievements.</p>
+            <h2 className="text-4xl font-bold">Our Journey</h2>
+            <p className="text-gray-400 mt-2">A timeline of our growth and achievements.</p>
           </motion.div>
           <InteractiveTimeline events={timelineEvents} />
         </div>

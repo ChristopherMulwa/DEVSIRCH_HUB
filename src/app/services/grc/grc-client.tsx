@@ -47,35 +47,19 @@ const GRCClientPage = () => {
 
   return (
     <div className="bg-white dark:bg-gray-900">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-gray-800 to-black text-white overflow-hidden">
-        <div className="container mx-auto px-4 py-24 md:py-32 relative z-10">
+      {/* New Header Section */}
+      <section className="bg-gray-800 pt-24 pb-16">
+        <div className="container mx-auto px-4 text-center">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: 'easeOut' }}
-            className="max-w-4xl"
+            transition={{ duration: 0.8 }}
           >
-            <div className="flex items-center bg-white/10 backdrop-blur-sm p-2 rounded-full self-start w-fit mb-4">
-              <Landmark className="w-8 h-8 mr-2 text-blue-300" />
-              <h2 className="text-lg font-semibold">Governance, Risk & Compliance</h2>
-            </div>
-            <h1 className="text-4xl md:text-6xl font-bold mb-4 leading-tight">
-              Achieve Clarity and Control in a Complex World
-            </h1>
-            <p className="text-lg md:text-xl text-gray-300 max-w-2xl">
+            <h1 className="text-4xl md:text-5xl font-bold text-white">Governance, Risk & Compliance</h1>
+            <p className="mt-4 text-lg text-gray-300 max-w-3xl mx-auto">
               We provide integrated GRC solutions to help you navigate risks, meet compliance demands, and govern with confidence.
             </p>
           </motion.div>
-        </div>
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="/cybersecurityServicehero.png"
-            alt="Abstract GRC background"
-            fill
-            className="opacity-20 object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
         </div>
       </section>
 

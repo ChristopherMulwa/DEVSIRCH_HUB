@@ -72,7 +72,7 @@ const Header = () => {
       color: '#1f2937', // text-gray-800
     },
     top: {
-      backgroundColor: 'rgba(0, 0, 0, 0.2)',
+      backgroundColor: '#111827',
       backdropFilter: 'blur(0px)',
       boxShadow: 'none',
       color: '#ffffff', // text-white

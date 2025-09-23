@@ -1,6 +1,6 @@
 
 import type { Metadata } from 'next';
-import Image from 'next/image';
+
 import { CheckCircle, Code, Smartphone, Server } from 'lucide-react';
 import Link from 'next/link';
 import TrustSignals from '@/components/TrustSignals';
@@ -78,20 +78,13 @@ const DevelopmentPage = () => {
       />
 
       <TrustSignals className="bg-gray-100 dark:bg-gray-800/40" variant="development" />
-      {/* Hero Section */}
-      <section className="relative h-[100dvh] flex items-center justify-center text-white">
-        <Image 
-          src="/Website&SoftwareDevelopmentImage.png" 
-          alt="Code on a screen" 
-          fill
-          sizes="100vw"
-          className="object-cover"
-          priority
-        />
-        <div className="absolute inset-0 bg-black/60" />
-        <div className="relative z-10 text-center px-4">
-          <h1 className="text-4xl md:text-6xl font-bold">Website & Software Development</h1>
-          <p className="mt-4 text-lg md:text-xl max-w-3xl mx-auto">Bringing your ideas to life with custom-built digital solutions.</p>
+      {/* New Header Section */}
+      <section className="bg-gray-50 pt-24 pb-16">
+        <div className="container mx-auto px-4 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-800">Website & Software Development</h1>
+          <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
+            Bringing your ideas to life with custom-built digital solutions.
+          </p>
         </div>
       </section>
 

@@ -31,7 +31,7 @@ const Map = dynamic(
 
 // Lazy load toast notifications for better initial performance
 const LazyToaster = dynamic(
-  () => import('react-hot-toast').then((mod) => ({ default: mod.Toaster })),
+  () => import('react-hot-toast').then((mod) => mod.Toaster),
   { ssr: false }
 );
 
@@ -211,7 +211,7 @@ const ContactPage = React.memo(() => {
 
   useEffect(() => {
     monitorSuspiciousActivity();
-  }, [fieldInteractions, monitorSuspiciousActivity]);
+  }, [fieldInteractions, formStartTime, monitorSuspiciousActivity]);
 
   // Input sanitization helper
   const sanitizeInput = useCallback((input: string): string => {
@@ -639,27 +639,24 @@ const ContactPage = React.memo(() => {
     }
   }, [trigger]);
 
-  // Save form data as user types
-  const handleFormChange = useCallback(() => {
-    if (typeof window === 'undefined') return;
-    
-    const formData = {
-      name: watchedFields.name || '',
-      email: watchedFields.email || '',
-      phone: watchedFields.phone || '',
-      message: watchedFields.message || ''
-    };
 
-    localStorage.setItem('contactFormData', JSON.stringify({
-      data: formData,
-      timestamp: Date.now()
-    }));
-  }, [watchedFields]);
 
   // Auto-save on form changes
   useEffect(() => {
-    handleFormChange();
-  }, [handleFormChange]);
+    const subscription = watch((value) => {
+      const formData = {
+        name: value.name || '',
+        email: value.email || '',
+        phone: value.phone || '',
+        message: value.message || ''
+      };
+      localStorage.setItem('contactFormData', JSON.stringify({
+        data: formData,
+        timestamp: Date.now()
+      }));
+    });
+    return () => subscription.unsubscribe();
+  }, [watch]);
 
   // Advanced accessibility functions
   const announceToScreenReader = useCallback((message: string) => {
@@ -856,32 +853,7 @@ const ContactPage = React.memo(() => {
         ))}
       </div>
 
-      <LazyToaster 
-        position="top-right"
-        containerStyle={{
-          top: 64,
-          right: 16,
-        }}
-        toastOptions={{
-          duration: 5000,
-          style: {
-            background: '#ffffff',
-            color: '#1f2937',
-          },
-          success: {
-            iconTheme: {
-              primary: '#10B981',
-              secondary: '#ffffff',
-            },
-          },
-          error: {
-            iconTheme: {
-              primary: '#EF4444',
-              secondary: '#ffffff',
-            },
-          },
-        }}
-      />
+      <LazyToaster />
 
       {/* New Clean Header - No Hero Image */}
       <section className="bg-gradient-to-br from-blue-50 to-indigo-50 py-12 md:py-16 lg:py-24" role="banner" aria-labelledby="contact-header">

@@ -1,6 +1,6 @@
 "use client";
 
-import Image from 'next/image';
+
 import Link from 'next/link';
 import { Eye, ShieldOff, BarChart, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -46,19 +46,19 @@ const processSteps = [
 const CybersecurityClientPage = () => {
   return (
     <div className="bg-gray-900 text-white">
-      {/* Hero Section */}
-      <section className="relative h-[90vh] sm:h-screen flex items-center justify-center text-center">
-        <Image 
-          src="/cybersecurityServicehero.png" 
-          alt="Abstract high-tech cybersecurity background" 
-          fill
-          className="object-cover"
-          priority
-        />
-        <div className="absolute inset-0 bg-black/70" />
-        <div className="relative z-10 px-4">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold">Cybersecurity for the Modern Enterprise</h1>
-          <p className="mt-4 text-lg sm:text-xl max-w-3xl mx-auto text-gray-300">Proactive, intelligent, and comprehensive solutions to protect your digital assets from evolving threats.</p>
+      {/* New Header Section */}
+      <section className="bg-gray-800 pt-24 pb-16">
+        <div className="container mx-auto px-4 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <h1 className="text-4xl md:text-5xl font-bold text-white">Cybersecurity Services</h1>
+            <p className="mt-4 text-lg text-gray-300 max-w-3xl mx-auto">
+              Proactive, intelligent, and comprehensive solutions to protect your digital assets from evolving threats.
+            </p>
+          </motion.div>
         </div>
       </section>
 

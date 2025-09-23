@@ -2,10 +2,9 @@
 "use client";
 
 import ModernCTA from '@/components/ModernCTA';
-import Image from 'next/image';
+
 import InteractiveServices from '@/components/InteractiveServices';
 import ModernFAQ from '@/components/ModernFAQ';
-import { motion } from 'framer-motion';
 
 const ServicesPageClient = () => {
   // FAQ data for schema markup
@@ -57,24 +56,7 @@ const ServicesPageClient = () => {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
       <div className="bg-white">
-        {/* Hero Section */}
-        <section className="relative h-screen flex items-center justify-center">
-          <Image
-            src="/ServicesHero.png"
-            alt="Abstract digital network"
-            fill
-            className="z-0 object-cover"
-          />
-          <div className="absolute inset-0 bg-black opacity-60 z-10"></div>
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8 }}
-            className="relative z-20 container mx-auto px-4 text-center text-white">
-            <h1 className="text-5xl md:text-6xl font-bold mb-4">Our Comprehensive IT Services</h1>
-            <p className="text-lg md:text-xl text-gray-200">Your trusted partner in cybersecurity, development, and IT infrastructure.</p>
-          </motion.div>
-        </section>
+
 
         <InteractiveServices />
 

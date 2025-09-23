@@ -48,10 +48,28 @@ body {
   }
 }
 
+@keyframes gradient-animation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 .animate-fade-in {
   animation: fadeIn 0.5s ease-in-out forwards;
 }
 
 .animate-fade-in-up {
   animation: fade-in-up 0.4s ease-out forwards;
+}
+
+.animated-gradient {
+  background: linear-gradient(45deg, #7928ca, #ff0080, #0070f3, #4c00ff);
+  background-size: 400% 400%;
+  animation: gradient-animation 15s ease infinite;
 }
