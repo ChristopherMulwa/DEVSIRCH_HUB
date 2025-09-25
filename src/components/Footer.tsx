@@ -19,9 +19,9 @@ const Footer = () => {
               Empowering your digital future with secure and innovative IT solutions.
             </p>
             <div className="flex space-x-4">
-              <a href="#" aria-label="Facebook" className="text-gray-400 hover:text-white transition-colors"><Facebook size={24} /></a>
-              <a href="#" aria-label="Twitter" className="text-gray-400 hover:text-white transition-colors"><Twitter size={24} /></a>
-              <a href="#" aria-label="LinkedIn" className="text-gray-400 hover:text-white transition-colors"><Linkedin size={24} /></a>
+              <a href="https://www.facebook.com/devsirchhub" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="text-gray-400 hover:text-white transition-colors"><Facebook size={24} /></a>
+              <a href="https://twitter.com/devsirchhub" target="_blank" rel="noopener noreferrer" aria-label="Twitter" className="text-gray-400 hover:text-white transition-colors"><Twitter size={24} /></a>
+              <a href="https://www.linkedin.com/company/devsirch-hub/posts" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="text-gray-400 hover:text-white transition-colors"><Linkedin size={24} /></a>
             </div>
           </div>
 
